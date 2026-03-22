@@ -545,8 +545,9 @@ sim_pop <- function(
 
     # Project population into next time step
     if (sex_specific == FALSE) {
+      .sim_pop$pop_down <- .sim_pop$pop + .sim_pop$spawners_down
       .sim_pop$pop <- project_pop(
-        x = .sim_pop$pop + .sim_pop$spawners_down,
+        x = .sim_pop$pop_down,
         age0 = .sim_pop$age0_down,
         nM = .sim_pop$nM,
         fM = .sim_pop$fM,
@@ -555,22 +556,26 @@ sim_pop <- function(
       )
     }
     if (sex_specific == TRUE) {
+       .sim_pop$pop_down_m <- add_unequal_vectors(
+                              .sim_pop$pop_m,
+                              .sim_pop$spawners_down * (1 - .sim_pop$sr)
+                                             )[1:.sim_pop$max_age_m]
+       
       .sim_pop$pop_m <- project_pop(
-        x = add_unequal_vectors(
-          .sim_pop$pop_m,
-          .sim_pop$spawners_down * (1 - .sim_pop$sr)
-        )[1:.sim_pop$max_age_m],
+        x = .sim_pop$pop_down_m,
         age0 = .sim_pop$age0_down * (1 - .sim_pop$sr),
         nM = .sim_pop$nM_m,
         fM = .sim_pop$fM,
         max_age = .sim_pop$max_age_m,
         species = .sim_pop$species
       )
-
+      
+      .sim_pop$pop_down_f <- add_unequal_vectors(
+                              .sim_pop$pop_f,
+                              .sim_pop$spawners_down * .sim_pop$sr
+                                             )
       .sim_pop$pop_f <- project_pop(
-        x = add_unequal_vectors(
-          .sim_pop$pop_f, .sim_pop$spawners_down * .sim_pop$sr
-        ),
+        x = .sim_pop$pop_down_f,
         age0 = .sim_pop$age0_down * .sim_pop$sr,
         nM = .sim_pop$nM_f,
         fM = .sim_pop$fM,
@@ -581,6 +586,11 @@ sim_pop <- function(
       .sim_pop$pop <- add_unequal_vectors(
         .sim_pop$pop_m,
         .sim_pop$pop_f
+      )
+      
+      .sim_pop$pop_down <- add_unequal_vectors(
+           .sim_pop$pop_down_m,
+           .sim_pop$pop_down_f
       )
     }
 

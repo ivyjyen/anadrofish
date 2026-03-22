@@ -31,9 +31,14 @@ make_output_row <- function(.sim_pop, sex_specific = FALSE) {
     sr           = .sim_pop$sr,
     s_juvenile   = .sim_pop$s_juvenile,
     iteroparity  = .sim_pop$iteroparity,
-    spawners     = list(.sim_pop$spawners),
-    pop          = list(.sim_pop$pop),
-    juveniles_out = .sim_pop$age0_down
+    spawners     = list(.sim_pop$spawners), # spawners entering fw to spawn, spawners2 = spawners who have survived after spawning
+    spawners_down = list(.sim_pop$spawners_down), # spawners who have successfully spawned and outmigrated past dams
+    pop_before_nM = sum(.sim_pop$pop_down)+.sim_pop$age0_down,
+    #poop         = list(.sim_pop$pop_down),
+    pop          = list(.sim_pop$pop), # after project pop (after inst mortality)
+    juveniles_out = .sim_pop$age0_down,
+    juveniles_before_outmigrating = .sim_pop$age0,
+    larvae       = sum(.sim_pop$recruits_f_age)
   )
 
   if (sex_specific) {
