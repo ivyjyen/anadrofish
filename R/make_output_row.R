@@ -38,7 +38,8 @@ make_output_row <- function(.sim_pop, sex_specific = FALSE) {
     pop          = list(.sim_pop$pop), # after project pop (after inst mortality)
     juveniles_out = .sim_pop$age0_down,
     juveniles_before_outmigrating = .sim_pop$age0,
-    larvae       = sum(.sim_pop$recruits_f_age)
+    larvae       = sum(.sim_pop$recruits_f_age),
+    biomass_in   = .sim_pop$biomass_in
   )
 
   if (sex_specific) {

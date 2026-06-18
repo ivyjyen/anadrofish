@@ -537,11 +537,31 @@ sim_pop <- function(
         nM = .sim_pop$nM_f,
         s_postspawn = .sim_pop$s_postspawn_f
       )
+      
+      .sim_pop$spawners2_m <- .sim_pop$spawners_m * .sim_pop$s_spawn_m
+      .sim_pop$spawners2_f <- .sim_pop$spawners_f * .sim_pop$s_spawn_f
+      
+      .sim_pop$spawners2 <- add_unequal_vectors(
+           .sim_pop$spawners2_m,
+           .sim_pop$spawners2_f
+      )
     }
 
     # Outmigrant survival
     .sim_pop$age0_down <- .sim_pop$age0 * .sim_pop$s_downstream_j
     .sim_pop$spawners_down <- .sim_pop$spawners2 * .sim_pop$s_downstream
+    
+    # Transport
+    .sim_pop$biomass_out <- make_biomass_out(
+        age0_down = .sim_pop$age0_down
+    )
+    
+    .sim_pop$biomass_in <-  make_biomass_in(
+        spawners = .sim_pop$spawners,
+        spawners_down = .sim_pop$spawners_down,
+        mass = .sim_pop$mass
+        
+    )
 
     # Project population into next time step
     if (sex_specific == FALSE) {
