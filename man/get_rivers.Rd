@@ -4,12 +4,12 @@
 \alias{get_rivers}
 \title{Rivers included in habitat data by species}
 \usage{
-get_rivers(species = c("ALE", "AMS", "BBH"))
+get_rivers(species = c("ALE", "AMS", "BBH", "EEL"))
 }
 \arguments{
 \item{species}{Species for which rivers are returned
-Choices include American shad (\code{"AMS"}), alewife (\code{"ALE"}), and
-blueback herring (\code{"BBH"}).}
+Choices include American shad (\code{"AMS"}), alewife (\code{"ALE"}), 
+blueback herring (\code{"BBH"}, and American eel (\code{"EEL"})).}
 }
 \value{
 A character vector of rivers that are included in

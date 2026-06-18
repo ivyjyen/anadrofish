@@ -8,7 +8,7 @@
 #'
 #' @param species Character string specifying species.
 #' Choices include American shad (\code{"AMS"}), alewife (\code{"ALE"}), and
-#' blueback herring (\code{"BBH"}).
+#' blueback herring (\code{"BBH"}, and American eel (\code{"EEL"})).
 #'
 #' @param custom_habitat A dataframe containing columns corresponding to the
 #' those in the output from \code{\link{custom_habitat_template}}. The default,
@@ -19,19 +19,19 @@
 #'
 #' @export
 #'
-get_region <- function(river, species = c("ALE", "AMS", "BBH"),
+get_region <- function(river, species = c("ALE", "AMS", "BBH","EEL"),
                        custom_habitat = NULL) {
   # Species error handling
   if (missing(species)) {
     stop("
 
-    Argument 'species' must be one of 'ALE', 'AMS', or 'BBH'.")
+    Argument 'species' must be one of 'ALE', 'AMS', 'BBH', or 'EEL'.")
   }
 
-  if (!species %in% c("ALE", "AMS", "BBH")) {
+  if (!species %in% c("ALE", "AMS", "BBH", "EEL")) {
     stop("
 
-    Argument 'species' must be one of 'ALE', 'AMS', or 'BBH'.")
+    Argument 'species' must be one of 'ALE', 'AMS', 'BBH', or 'EEL'.")
   }
 
   # River error handling
@@ -66,6 +66,10 @@ get_region <- function(river, species = c("ALE", "AMS", "BBH"),
     if (species == "BBH") {
       units <- custom_habitat$region[custom_habitat$river == river]
     }
+      
+    if (species == "EEL") {
+      units <- custom_habitat$region[custom_habitat$river == river]
+       }
   } else {
     # Select habitat units based on huc_code
     if (species == "AMS") {
@@ -79,6 +83,10 @@ get_region <- function(river, species = c("ALE", "AMS", "BBH"),
     if (species == "BBH") {
       units <- anadrofish::habitat_bbh$POP[anadrofish::habitat_bbh$River_huc == river]
     }
+      
+    if (species == "EEL") {
+      units <- anadrofish::habitat_eel$POP[anadrofish::habitat_eel$River_huc == river]
+      }
   }
 
   # Get the region

@@ -7,8 +7,8 @@
 #' passage probabilities and uncertainty in life-history information.
 #'
 #' @param species Species for which population dynamics will be simulated.
-#' Choices include American shad (\code{"AMS"}), alewife (\code{"ALE"}), and
-#' blueback herring (\code{"BBH"}).
+#' Choices include American shad (\code{"AMS"}), alewife (\code{"ALE"}),
+#' blueback herring (\code{"BBH"}), and American eel (\code{EEL"}).
 #'
 #' @param river River basin. Available rivers implemented in package
 #' can be viewed by calling \code{\link{get_rivers}} with no arguments
@@ -180,7 +180,7 @@
 #' @export
 #'
 sim_pop <- function(
-    species = c("ALE", "AMS", "BBH"),
+    species = c("ALE", "AMS", "BBH", "EEL"),
     nyears = 50,
     river,
     max_age = NULL,
@@ -204,13 +204,13 @@ sim_pop <- function(
   if (missing(species)) {
     stop("
 
-    Argument 'species' must be one of 'ALE', 'AMS', or 'BBH'.")
+    Argument 'species' must be one of 'ALE', 'AMS', 'BBH', or 'EEL'.")
   }
 
-  if (!species %in% c("ALE", "AMS", "BBH")) {
+  if (!species %in% c("ALE", "AMS", "BBH", "EEL")) {
     stop("
 
-    Argument 'species' must be one of 'ALE', 'AMS', or 'BBH'.")
+    Argument 'species' must be one of 'ALE', 'AMS', BBH', or 'EEL'.")
   }
 
   # River error handling
@@ -536,6 +536,14 @@ sim_pop <- function(
       .sim_pop$s_spawn_f <- make_s_spawn(
         nM = .sim_pop$nM_f,
         s_postspawn = .sim_pop$s_postspawn_f
+      )
+      
+      .sim_pop$spawners2_m <- .sim_pop$spawners_m * .sim_pop$s_spawn_m
+      .sim_pop$spawners2_f <- .sim_pop$spawners_f * .sim_pop$s_spawn_f
+      
+      .sim_pop$spawners2 <- add_unequal_vectors(
+           .sim_pop$spawners2_m,
+           .sim_pop$spawners2_f
       )
     }
 

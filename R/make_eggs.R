@@ -7,8 +7,8 @@
 #' @param river The river for which eggs will be simulated.
 #'
 #' @param species Species for which population dynamics will be simulated.
-#' Choices include American shad (\code{"AMS"}), alewife (\code{"ALE"}), and
-#' blueback herring (\code{"BBH"}).
+#' Choices include American shad (\code{"AMS"}), alewife (\code{"ALE"}), 
+#' blueback herring (\code{"BBH"}), and American eel (\code{"EEL"}).
 #'
 #' @param custom_habitat A dataframe containing columns corresponding to the
 #' those in the output from \code{\link{custom_habitat_template}}. The default,
@@ -45,11 +45,11 @@
 #'
 #' @export
 #'
-make_eggs <- function(river, species = c("AMS", "ALE", "BBH"),
+make_eggs <- function(river, species = c("AMS", "ALE", "BBH", "EEL"),
                       custom_habitat = NULL) {
   # Error handling ----
   # Require species to be specified from vector of choices
-  if (!missing(species)) species <- match.arg(species, c("AMS", "ALE", "BBH"))
+  if (!missing(species)) species <- match.arg(species, c("AMS", "ALE", "BBH", "EEL"))
 
   # River error handling
   if (missing(river)) {
@@ -139,6 +139,13 @@ make_eggs <- function(river, species = c("AMS", "ALE", "BBH"),
       river = river, species = species,
       custom_habitat = custom_habitat
     )
+  }
+  
+  if (species == "EEL") {
+      eggs <- anadrofish::make_eggs_eel(
+          river = river, species = species,
+          custom_habitat = custom_habitat
+      )
   }
 
   return(eggs)

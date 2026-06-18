@@ -31,6 +31,10 @@
 #' Atlantic States Marine Fisheries Commission. 2024. River herring
 #' benchmark stock assessment and peer-review report. ASMFC, Arlington, VA.
 #' URL: https://asmfc.org/uploads/file/66f59e40RiverHerringAssessment_PeerReviewReport_2024.pdf
+#' 
+#' Atlantic States Marine Fisheries Commission. 2012. American Eel benchmark
+#' stock assessment. ASMFC, Arlington, VA.
+#' URL: https://asmfc.org/wp-content/uploads/2024/11/americanEelBenchmarkStockAssessmentReport_May2012.pdf
 #'
 #' @source Atlantic States Marine Fisheries Commission
 #'
@@ -38,7 +42,7 @@
 #'
 make_maxage <- function(river,
                         sex = c("female", "male"),
-                        species = c("AMS", "ALE", "BBH"),
+                        species = c("AMS", "ALE", "BBH", "EEL"),
                         custom_habitat = NULL) {
   # Required argument matching
   if (!missing(sex)) sex <- match.arg(sex)
@@ -46,10 +50,10 @@ make_maxage <- function(river,
 
   # Species error handling
   # Make sure species is one of those implemented in package
-  if (!species %in% c("ALE", "AMS", "BBH")) {
+  if (!species %in% c("ALE", "AMS", "BBH", "EEL")) {
     stop("
 
-    Argument 'species' must be one of 'ALE', 'AMS', or 'BBH'.")
+    Argument 'species' must be one of 'ALE', 'AMS', 'BBH', or 'EEL'.")
   }
 
   # River error handling
@@ -128,5 +132,29 @@ make_maxage <- function(river,
     }
   }
 
+  # Max age for all sexes and stocks of american eel was 12 years (ASMFC 2024)
+  if (species == "EEL") {
+      if (missing(sex)) {
+          max_age <- max(anadrofish::max_ages_eel$maxages[
+              anadrofish::max_ages_eel$region == region
+          ])
+      }
+      
+      if (!missing(sex)) {
+          if (sex == "female") {
+              max_age <- anadrofish::max_ages_eel$maxage[
+                  anadrofish::max_ages_eel$region == region &
+                      anadrofish::max_ages_eel$sex == "F"
+              ]
+          }
+          
+          if (sex == "male") {
+              max_age <- anadrofish::max_ages_eel$maxage[
+                  anadrofish::max_ages_eel$region == region &
+                      anadrofish::max_ages_eel$sex == "M"
+              ]
+          }
+      }
+  }
   return(max_age)
 }

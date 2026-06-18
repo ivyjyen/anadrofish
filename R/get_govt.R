@@ -8,7 +8,7 @@
 #'
 #' @param species Character string specifying species.
 #' Choices include American shad (\code{"AMS"}), alewife (\code{"ALE"}), and
-#' blueback herring (\code{"BBH"}).
+#' blueback herring (\code{"BBH"}, and American eel (\code{"EEL"})).
 #'
 #' @param custom_habitat A dataframe containing columns corresponding to the
 #' those in the output from \code{\link{custom_habitat_template}}. The default,
@@ -22,19 +22,19 @@
 #'
 #' @export
 #'
-get_govt <- function(river, species = c("ALE", "AMS", "BBH"),
+get_govt <- function(river, species = c("ALE", "AMS", "BBH","EEL"),
                      custom_habitat = NULL) {
   # Species error handling
   if (missing(species)) {
     stop("
 
-    Argument 'species' must be one of 'ALE', 'AMS', or 'BBH'.")
+    Argument 'species' must be one of 'ALE', 'AMS', 'BBH', or 'EEL'.")
   }
 
-  if (!species %in% c("ALE", "AMS", "BBH")) {
+  if (!species %in% c("ALE", "AMS", "BBH", "EEL")) {
     stop("
 
-    Argument 'species' must be one of 'ALE', 'AMS', or 'BBH'.")
+    Argument 'species' must be one of 'ALE', 'AMS', 'BBH', or 'EEL'.")
   }
 
   # River error handling
@@ -73,6 +73,10 @@ get_govt <- function(river, species = c("ALE", "AMS", "BBH"),
     if (species == "BBH") {
       govt <- anadrofish::habitat_bbh$State[anadrofish::habitat_bbh$River_huc == river][1]
     }
+      
+    if (species == "EEL") {
+      govt <- anadrofish::habitat_eel$State[anadrofish::habitat_eel$River_huc == river][1]
+      }
   }
 
   # Return governmental unit(s)

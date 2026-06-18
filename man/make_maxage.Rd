@@ -10,7 +10,7 @@ Atlantic States Marine Fisheries Commission
 make_maxage(
   river,
   sex = c("female", "male"),
-  species = c("AMS", "ALE", "BBH"),
+  species = c("AMS", "ALE", "BBH", "EEL"),
   custom_habitat = NULL
 )
 }
@@ -51,4 +51,8 @@ Arlington, VA.
 Atlantic States Marine Fisheries Commission. 2024. River herring
 benchmark stock assessment and peer-review report. ASMFC, Arlington, VA.
 URL: https://asmfc.org/uploads/file/66f59e40RiverHerringAssessment_PeerReviewReport_2024.pdf
+
+Atlantic States Marine Fisheries Commission. 2012. American Eel benchmark
+stock assessment. ASMFC, Arlington, VA.
+URL: https://asmfc.org/wp-content/uploads/2024/11/americanEelBenchmarkStockAssessmentReport_May2012.pdf
 }

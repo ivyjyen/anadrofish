@@ -55,6 +55,7 @@ The following built-in datasets are included:
     \item{\code{\link{habitat}}}{American shad habitat data}
     \item{\code{\link{habitat_ale}}}{Alewife habitat data}
     \item{\code{\link{habitat_bbh}}}{Blueback herring habitat data}
+    \item{\code{\link{habitat_eel}}}{American eel habitat data}
     \item{\code{\link{jessop_1993}}}{Fork length-fecundity relationships for alewife}
     \item{\code{\link{length_weight}}}{Regional length-weight regression parameters for American shad}
     \item{\code{\link{lw_pars_rh}}}{Regional length-weight regression parameters for river herring}

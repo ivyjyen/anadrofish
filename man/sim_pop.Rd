@@ -5,7 +5,7 @@
 \title{Simulate population dynamics through time.}
 \usage{
 sim_pop(
-  species = c("ALE", "AMS", "BBH"),
+  species = c("ALE", "AMS", "BBH", "EEL"),
   nyears = 50,
   river,
   max_age = NULL,
@@ -28,8 +28,8 @@ sim_pop(
 }
 \arguments{
 \item{species}{Species for which population dynamics will be simulated.
-Choices include American shad (\code{"AMS"}), alewife (\code{"ALE"}), and
-blueback herring (\code{"BBH"}).}
+Choices include American shad (\code{"AMS"}), alewife (\code{"ALE"}),
+blueback herring (\code{"BBH"}), and American eel (\code{EEL"}).}
 
 \item{nyears}{Number of years for simulation.}
 

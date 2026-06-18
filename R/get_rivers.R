@@ -8,8 +8,8 @@
 #' parallel processing.
 #'
 #' @param species Species for which rivers are returned
-#' Choices include American shad (\code{"AMS"}), alewife (\code{"ALE"}), and
-#' blueback herring (\code{"BBH"}).
+#' Choices include American shad (\code{"AMS"}), alewife (\code{"ALE"}), 
+#' blueback herring (\code{"BBH"}, and American eel (\code{"EEL"})).
 #'
 #' @return A character vector of rivers that are included in
 #' built-in habitat datasets for selected \code{species}.
@@ -18,12 +18,12 @@
 #'
 #' @export
 #'
-get_rivers <- function(species = c("ALE", "AMS", "BBH")) {
+get_rivers <- function(species = c("ALE", "AMS", "BBH", "EEL")) {
   # Make sure species is one of those implemented in package
-  if (!species %in% c("ALE", "AMS", "BBH")) {
+  if (!species %in% c("ALE", "AMS", "BBH", "EEL")) {
     stop("
 
-    Argument 'species' must be one of 'ALE', 'AMS', or 'BBH'.")
+    Argument 'species' must be one of 'ALE', 'AMS', 'BBH', or 'EEL'.")
   }
 
   if (species == "AMS") {
@@ -35,4 +35,7 @@ get_rivers <- function(species = c("ALE", "AMS", "BBH")) {
   if (species == "BBH") {
     return(sort(unique(anadrofish::habitat_bbh$River_huc)))
   }
+  if (species == "EEL") {
+    return(sort(unique(anadrofish::habitat_eel$River_huc)))
+    }
 }

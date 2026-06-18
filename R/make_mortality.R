@@ -12,8 +12,8 @@
 #' of male and female estimates is used.
 #'
 #' @param species Species for which population dynamics will be simulated.
-#' Choices include American shad (\code{"AMS"}), alewife (\code{"ALE"}), and
-#' blueback herring (\code{"BBH"}).
+#' Choices include American shad (\code{"AMS"}), alewife (\code{"ALE"}),
+#' blueback herring (\code{"BBH"}), and American eel (\code{EEL}).
 #'
 #' @param custom_habitat A dataframe containing columns corresponding to the
 #' those in the output from \code{\link{custom_habitat_template}}. The default,
@@ -32,6 +32,10 @@
 #' Atlantic States Marine Fisheries Commission. 2024. River herring
 #' benchmark stock assessment and peer-review report. ASMFC, Arlington, VA.
 #' URL: https://asmfc.org/uploads/file/66f59e40RiverHerringAssessment_PeerReviewReport_2024.pdf
+#' 
+#' Atlantic States Marine Fisheries Commission. 2012. American Eel benchmark
+#' stock assessment. ASMFC, Arlington, VA.
+#' URL: https://asmfc.org/wp-content/uploads/2024/11/americanEelBenchmarkStockAssessmentReport_May2012.pdf
 #'
 #' @source Atlantic States Marine Fisheries Commission
 #'
@@ -39,7 +43,7 @@
 #'
 make_mortality <- function(river,
                            sex = c(NULL, "female", "male"),
-                           species = c("AMS", "ALE", "BBH"),
+                           species = c("AMS", "ALE", "BBH", "EEL"),
                            custom_habitat = NULL) {
   if (!missing(species)) species <- match.arg(species)
 
@@ -150,6 +154,32 @@ make_mortality <- function(river,
         ]
       }
     }
+  }
+  
+  
+  if (species == "EEL") {
+      if (missing(sex)) {
+          nM <- anadrofish::mortality_eel$M[
+              anadrofish::mortality_eel$region == region &
+                  anadrofish::mortality_eel$sex == "Pooled"
+          ]
+      }
+      
+      if (!missing(sex)) {
+          if (sex == "female") {
+              nM <- anadrofish::mortality_eel$M[
+                  anadrofish::mortality_eel$region == region &
+                      anadrofish::mortality_eel$sex == "Female"
+              ]
+          }
+          
+          if (sex == "male") {
+              nM <- anadrofish::mortality_eel$M[
+                  anadrofish::mortality_eel$region == region &
+                      anadrofish::mortality_eel$sex == "Male"
+              ]
+          }
+      }
   }
 
   return(nM)

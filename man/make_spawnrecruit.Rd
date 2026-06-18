@@ -7,7 +7,7 @@
 make_spawnrecruit(
   river,
   sex = c("male", "female"),
-  species = c("ALE", "AMS", "BBH"),
+  species = c("ALE", "AMS", "BBH", "EEL"),
   custom_habitat = NULL
 )
 }
@@ -18,9 +18,11 @@ make_spawnrecruit(
 male and female spawn recruit probabilities are returned.}
 
 \item{species}{Species for which rivers are returned
-Choices include American shad (\code{"AMS"}), alewife (\code{"ALE"}), and
-blueback herring (\code{"BBH"}). If species is "ALE" or "BBH" then this
-function calls \code{\link{make_spawnrecruit_rh}}.}
+Choices include American shad (\code{"AMS"}), alewife (\code{"ALE"}), 
+blueback herring (\code{"BBH"}), and American eel (\code{"EEL"}).
+If species is "ALE" or "BBH" then this function calls
+\code{\link{make_spawnrecruit_rh}}. If species is "EEL" then this function 
+calls \code{\link{make_spawnrecruit_eel}}.}
 
 \item{custom_habitat}{A dataframe containing columns corresponding to the
 those in the output from \code{\link{custom_habitat_template}}. The default,
