@@ -233,14 +233,14 @@ sim_pop <- function(
   }
 
   # Make a hidden environment so it is easier
-  # to pass output to fill_output() and write_output()
+  # to pass output to make_output_row()
   .sim_pop <- new.env()
 
   # Unlist function args to internal environment
   list2env(mget(names(formals(sim_pop))), envir = .sim_pop)
 
   # Argument matching for output_years
-  .sim_pop$output_years <- output_years
+  .sim_pop$output_years <- match.arg(output_years)
 
   # Get region for river system
   .sim_pop$region <- get_region(
@@ -352,11 +352,8 @@ sim_pop <- function(
       sim_juvenile_s(species = .sim_pop$species)
   }
 
-  # Make output vectors
-  environment(make_output) <- .sim_pop
-  list2env(make_output(nyears = .sim_pop$nyears, sex_specific = sex_specific),
-    envir = .sim_pop
-  )
+  # Pre-allocate output row collector
+  rows <- vector("list", .sim_pop$nyears)
 
   # Make habitat from built-in data sets
   .sim_pop$acres <- make_habitat(
@@ -548,8 +545,9 @@ sim_pop <- function(
 
     # Project population into next time step
     if (sex_specific == FALSE) {
+      .sim_pop$pop_down <- .sim_pop$pop + .sim_pop$spawners_down
       .sim_pop$pop <- project_pop(
-        x = .sim_pop$pop + .sim_pop$spawners_down,
+        x = .sim_pop$pop_down,
         age0 = .sim_pop$age0_down,
         nM = .sim_pop$nM,
         fM = .sim_pop$fM,
@@ -558,22 +556,26 @@ sim_pop <- function(
       )
     }
     if (sex_specific == TRUE) {
+       .sim_pop$pop_down_m <- add_unequal_vectors(
+                              .sim_pop$pop_m,
+                              .sim_pop$spawners_down * (1 - .sim_pop$sr)
+                                             )[1:.sim_pop$max_age_m]
+       
       .sim_pop$pop_m <- project_pop(
-        x = add_unequal_vectors(
-          .sim_pop$pop_m,
-          .sim_pop$spawners_down * (1 - .sim_pop$sr)
-        )[1:.sim_pop$max_age_m],
+        x = .sim_pop$pop_down_m,
         age0 = .sim_pop$age0_down * (1 - .sim_pop$sr),
         nM = .sim_pop$nM_m,
         fM = .sim_pop$fM,
         max_age = .sim_pop$max_age_m,
         species = .sim_pop$species
       )
-
+      
+      .sim_pop$pop_down_f <- add_unequal_vectors(
+                              .sim_pop$pop_f,
+                              .sim_pop$spawners_down * .sim_pop$sr
+                                             )
       .sim_pop$pop_f <- project_pop(
-        x = add_unequal_vectors(
-          .sim_pop$pop_f, .sim_pop$spawners_down * .sim_pop$sr
-        ),
+        x = .sim_pop$pop_down_f,
         age0 = .sim_pop$age0_down * .sim_pop$sr,
         nM = .sim_pop$nM_f,
         fM = .sim_pop$fM,
@@ -585,16 +587,17 @@ sim_pop <- function(
         .sim_pop$pop_m,
         .sim_pop$pop_f
       )
+      
+      .sim_pop$pop_down <- add_unequal_vectors(
+           .sim_pop$pop_down_m,
+           .sim_pop$pop_down_f
+      )
     }
 
-    # Fill the output vectors
-    environment(fill_output) <- .sim_pop
-    list2env(fill_output(.sim_pop, sex_specific = sex_specific),
-      envir = .sim_pop
-    )
+    # Capture output for this year
+    rows[[t]] <- make_output_row(.sim_pop, sex_specific)
   } # YEAR LOOP
 
-  # Write the results to an object
-  environment(write_output) <- .sim_pop
-  write_output(.sim_pop, sex_specific = sex_specific)
+  # Assemble results into a data.frame
+  assemble_output(rows, .sim_pop$age_structured_output, .sim_pop$output_years)
 }
