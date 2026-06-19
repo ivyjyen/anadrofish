@@ -238,6 +238,9 @@ sim_pop <- function(
 
   # Unlist function args to internal environment
   list2env(mget(names(formals(sim_pop))), envir = .sim_pop)
+  
+  # DEBUG: expose env to global env
+  assign(".sim_pop_debug", .sim_pop, envir = .GlobalEnv)
 
   # Argument matching for output_years
   .sim_pop$output_years <- match.arg(output_years)
@@ -340,11 +343,15 @@ sim_pop <- function(
 
   # Get estimated number of eggs per female if not specified
   if (is.null(.sim_pop$eggs)) {
-    .sim_pop$eggs <- make_eggs(.sim_pop$river,
+    em <- make_eggs(.sim_pop$river,
       species = .sim_pop$species,
       custom_habitat = .sim_pop$custom_habitat
     )
+    
+    .sim_pop$eggs <- em$eggs
+    .sim_pop$mass <- em$mass
   }
+  
 
   # Get hatch-to-outmigrant survival if not specified
   if (is.null(.sim_pop$s_juvenile)) {
@@ -526,6 +533,8 @@ sim_pop <- function(
     # Calculate pre-spawn (fw survival) based on post-spawn and M
     if (sex_specific == FALSE) {
       .sim_pop$s_spawn <- make_s_spawn(.sim_pop$nM, .sim_pop$s_postspawn)
+      
+      .sim_pop$spawners2 <- .sim_pop$spawners * .sim_pop$s_spawn
     }
 
     if (sex_specific == TRUE) {
@@ -551,6 +560,7 @@ sim_pop <- function(
     .sim_pop$age0_down <- .sim_pop$age0 * .sim_pop$s_downstream_j
     .sim_pop$spawners_down <- .sim_pop$spawners2 * .sim_pop$s_downstream
     
+    
     # Transport
     .sim_pop$biomass_out <- make_biomass_out(
         age0_down = .sim_pop$age0_down
@@ -560,8 +570,26 @@ sim_pop <- function(
         spawners = .sim_pop$spawners,
         spawners_down = .sim_pop$spawners_down,
         mass = .sim_pop$mass
-        
     )
+    
+    .sim_pop$pfas_out <- sum(
+        rtrunc_norm(
+        n = round(.sim_pop$age0_down),
+        a = 0.05, # lower bound
+        b = 100, # upper bound
+        mean = 25,
+        sd = 0.2
+    ))
+    
+    .sim_pop$pfas_in <- sum(
+        rtrunc_norm(
+        n = round(sum(.sim_pop$spawners)-sum(.sim_pop$spawners_down)),
+        a = 0.05, # lower bound
+        b = 100, # upper bound
+        mean = 0.36,
+        sd = 0.2
+    ))
+    
 
     # Project population into next time step
     if (sex_specific == FALSE) {

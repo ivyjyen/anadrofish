@@ -39,7 +39,10 @@ make_output_row <- function(.sim_pop, sex_specific = FALSE) {
     juveniles_out = .sim_pop$age0_down,
     juveniles_before_outmigrating = .sim_pop$age0,
     larvae       = sum(.sim_pop$recruits_f_age),
-    biomass_in   = .sim_pop$biomass_in
+    biomass_out  = .sim_pop$biomass_out,
+    biomass_in   = sum(.sim_pop$biomass_in),
+    pfas_in      = .sim_pop$pfas_in,
+    pfas_out     = .sim_pop$pfas_out
   )
 
   if (sex_specific) {

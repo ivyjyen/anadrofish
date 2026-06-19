@@ -151,5 +151,5 @@ make_eggs_rh <- function(river, species = c("ALE", "BBH"),
     eggs <- apply(do.call(rbind, eggs), 2, mean) * sample(1:3, 1, replace = FALSE)
   }
 
-  return(eggs)
+  return(list(eggs = eggs, mass = mass))
 }
