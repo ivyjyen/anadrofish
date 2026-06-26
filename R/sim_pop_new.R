@@ -562,34 +562,27 @@ sim_pop <- function(
     
     
     # Transport
-    .sim_pop$biomass_out <- make_biomass_out(
-        age0_down = .sim_pop$age0_down
-    )
-    
+    ## Biomass
     .sim_pop$biomass_in <-  make_biomass_in(
         spawners = .sim_pop$spawners,
         spawners_down = .sim_pop$spawners_down,
         mass = .sim_pop$mass
     )
     
-    .sim_pop$pfas_out <- sum(
-        rtrunc_norm(
-        n = round(.sim_pop$age0_down),
-        a = 0.05, # lower bound
-        b = 100, # upper bound
-        mean = 25,
-        sd = 0.2
-    ))
+    .sim_pop$biomass_out <- make_biomass_out(
+        age0_down = .sim_pop$age0_down
+    )
     
-    .sim_pop$pfas_in <- sum(
-        rtrunc_norm(
-        n = round(sum(.sim_pop$spawners)-sum(.sim_pop$spawners_down)),
-        a = 0.05, # lower bound
-        b = 100, # upper bound
-        mean = 0.36,
-        sd = 0.2
-    ))
-    
+    # PFAS
+    .sim_pop$pfas_in <- make_pfas_in(
+        spawners = .sim_pop$spawners,
+        spawners_down = .sim_pop$spawners_down,
+        mass = .sim_pop$mass
+    )
+
+    .sim_pop$pfas_out <- make_pfas_out(
+        age0_down = .sim_pop$age0_down
+    )
 
     # Project population into next time step
     if (sex_specific == FALSE) {

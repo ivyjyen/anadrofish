@@ -8,7 +8,7 @@
 #' freshwater and returned to the ocean.
 #'
 #' @return Biomass in grams of unsuccessful spawners. Numeric vector 
-#' of \code{length(eggs}.
+#' of \code{length(spawners)}.
 #'
 #' @example inst/examples/make_biomass_in_ex.R
 #'
