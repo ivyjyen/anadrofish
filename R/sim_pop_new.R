@@ -343,13 +343,13 @@ sim_pop <- function(
 
   # Get estimated number of eggs per female if not specified
   if (is.null(.sim_pop$eggs)) {
-    em <- make_eggs(.sim_pop$river,
+    .sim_pop$em <- make_eggs(.sim_pop$river,
       species = .sim_pop$species,
       custom_habitat = .sim_pop$custom_habitat
     )
     
-    .sim_pop$eggs <- em$eggs
-    .sim_pop$mass <- em$mass
+    .sim_pop$eggs <- .sim_pop$em$eggs
+    .sim_pop$mass <- .sim_pop$em$mass
   }
   
 
@@ -569,20 +569,43 @@ sim_pop <- function(
         mass = .sim_pop$mass
     )
     
+    .sim_pop$biomass_in2 <-  make_biomass_in(
+      spawners = .sim_pop$spawners,
+      spawners_down = 0,
+      mass = .sim_pop$mass
+    )
+    
     .sim_pop$biomass_out <- make_biomass_out(
         age0_down = .sim_pop$age0_down
     )
     
     # PFAS
-    .sim_pop$pfas_in <- make_pfas_in(
+    if (t < nyears) {
+      
+      .sim_pop$pfas_in <- 0
+      .sim_pop$pfas_in2 <- 0
+      .sim_pop$pfas_out <- 0
+    }
+    
+    if (t == nyears) {
+      
+      .sim_pop$pfas_in <- make_pfas_in(
         spawners = .sim_pop$spawners,
         spawners_down = .sim_pop$spawners_down,
         mass = .sim_pop$mass
-    )
-
-    .sim_pop$pfas_out <- make_pfas_out(
+      )
+      
+      .sim_pop$pfas_in2 <- make_pfas_in(
+        spawners = .sim_pop$spawners,
+        spawners_down = 0,
+        mass = .sim_pop$mass
+      )
+      
+      .sim_pop$pfas_out <- make_pfas_out(
         age0_down = .sim_pop$age0_down
-    )
+      )
+
+    }
 
     # Project population into next time step
     if (sex_specific == FALSE) {

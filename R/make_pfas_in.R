@@ -25,13 +25,18 @@ make_pfas_in <- function(spawners, spawners_down, mass) {
     # For each age class, simulate PFAS concentration and compute mass-specific total
     age_specific_pfas <- sapply(seq_along(spawners_in), function(i) {
         
-        simulated_conc <- rtrunc_norm(
-            n    = spawners_in[i],
-            a    = 0.05,
-            b    = 100,
-            mean = 3.94,
-            sd   = 2.92
+        simulated_conc <- rlnorm (
+          n = spawners_in[i],
+          meanlog = log(5),
+          sdlog = log(2)
         )
+        # simulated_conc <- rtrunc_norm(
+        #     n    = spawners_in[i],
+        #     a    = 0.05,
+        #     b    = 100,
+        #     mean = 3.94,
+        #     sd   = 2.92
+        # )
         
         sum(simulated_conc * mass[i])
     })
