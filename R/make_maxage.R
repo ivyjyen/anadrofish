@@ -11,8 +11,8 @@
 #' or pooled sex data used for river herring.
 #'
 #' @param species Species for which population dynamics will be simulated.
-#' Choices include American shad (\code{"AMS"}), alewife (\code{"ALE"}), and
-#' blueback herring (\code{"BBH"}).
+#' Choices include American shad (\code{"AMS"}), alewife (\code{"ALE"}),
+#' blueback herring (\code{"BBH"}), and American eel (\code({"EEL"}).
 #'
 #' @param custom_habitat A dataframe containing columns corresponding to the
 #' those in the output from \code{\link{custom_habitat_template}}. The default,
@@ -135,7 +135,7 @@ make_maxage <- function(river,
   # Max age for all sexes and stocks of american eel was 12 years (ASMFC 2024)
   if (species == "EEL") {
       if (missing(sex)) {
-          max_age <- max(anadrofish::max_ages_eel$maxages[
+          max_age <- max(anadrofish::max_ages_eel$maxage[
               anadrofish::max_ages_eel$region == region
           ])
       }

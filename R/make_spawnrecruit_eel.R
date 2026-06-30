@@ -11,6 +11,8 @@
 #' by ASMFC (2012) and inland maturity schedule was derived from data collected
 #' from the Shenandoah River (Sheila Eyler, U.S. Fish & Wildlife Service, 
 #' unpublished data.)
+#' 
+#' @param species A character indicating American eel species.
 #'
 #' @param river River for which maximum age is needed.
 #'
@@ -29,7 +31,7 @@
 #' benchmark stock assessment and peer-review report. ASMFC, Arlington, VA.
 #' URL: https://asmfc.org/wp-content/uploads/2024/11/AmEelBenchmarkStockAssessment_PeerReviewReport_Aug2023.pdf
 #'
-#' @examples make_spawnrecruit_eel(river = "Hudson", species = "EEL", sex = "female")
+#' @examples make_spawnrecruit_eel(river = "Hudson", sex = "female")
 #'
 #' @export
 #'
@@ -40,7 +42,7 @@ make_spawnrecruit_eel <- function(river,
     # Error handling ----
     # Require sex to be specified from vector of choices
     if (!missing(sex)) sex <- match.arg(sex, c("male", "female"))
-    
+
     # Require species to be specified from vector of choices
     if (!missing(species)) species <- match.arg(species, "EEL")
     
@@ -63,47 +65,46 @@ make_spawnrecruit_eel <- function(river,
     To see a list of available rivers, run get_rivers()")
     }
     
-    if (species == "EEL") {
-        # Get region
-        region <- get_region(
-            river = river, species = species,
-            custom_habitat = custom_habitat
-        )
-        
-        if (missing(sex)) {
-            max_age <- make_maxage(river, custom_habitat = custom_habitat)
-            probs <- as.numeric(
-                colMeans(anadrofish::maturity[
-                    anadrofish::maturity$region == region, 3:(2 + max_age)
-                ])
-            )
-        }
-        
-        if (!missing(sex)) {
-            max_age <- make_maxage(
-                river = river, sex = sex, species = "EEL",
-                custom_habitat = custom_habitat
-            )
-            
-            if (sex == "female") {
-                probs <- as.numeric(
-                    anadrofish::maturity[
-                        anadrofish::maturity$region == region &
-                            anadrofish::maturity$sex == "F", 3:(2 + max_age)
-                    ]
-                )
-            }
-            
-            if (sex == "male") {
-                probs <- as.numeric(
-                    anadrofish::maturity[
-                        anadrofish::maturity$region == region &
-                            anadrofish::maturity$sex == "M", 3:(2 + max_age)
-                    ]
-                )
-            }
-        }
+    # Get region
+    region <- get_region(
+      river = river, species = species,
+      custom_habitat = custom_habitat
+    )
+    
+    if (missing(sex)) {
+      max_age <- make_maxage(river, custom_habitat = custom_habitat)
+      probs <- as.numeric(
+        colMeans(anadrofish::maturity[
+          anadrofish::maturity$region == region, 3:(2 + max_age)
+        ])
+      )
     }
+    
+    if (!missing(sex)) {
+      max_age <- make_maxage(
+        river = river, sex = sex, species = "EEL",
+        custom_habitat = custom_habitat
+      )
+        
+      if (sex == "female") {
+        probs <- as.numeric(
+          anadrofish::maturity[
+            anadrofish::maturity$region == region &
+              anadrofish::maturity$sex == "F", 3:(2 + max_age)
+          ]
+        )
+      }
+        
+      if (sex == "male") {
+        probs <- as.numeric(
+          anadrofish::maturity[
+            anadrofish::maturity$region == region &
+              anadrofish::maturity$sex == "M", 3:(2 + max_age)
+          ]
+        )
+      }
+    }
+    
     
     return(probs)
 }
