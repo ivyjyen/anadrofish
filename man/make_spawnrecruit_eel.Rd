@@ -17,6 +17,8 @@ make_spawnrecruit_eel(
 \item{sex}{A character indicating \code{"male"}, \code{"female"},
 or \code{"Pooled"} sex for fish.}
 
+\item{species}{A character indicating American eel species.}
+
 \item{custom_habitat}{A dataframe containing columns corresponding to the
 those in the output from \code{\link{custom_habitat_template}}. The default,
 \code{NULL} uses the default habitat data set for a given combination of
@@ -28,8 +30,7 @@ of mature fish at each age, from age 1 to maximum age.
 }
 \description{
 Simulate proportion of population that is mature
-spawners from sex-specific maturity schedules for river herring
-in \code{\link{maki_pars}}.
+spawners from sex-specific maturity schedules for American eel.
 }
 \details{
 The primary use of this function is to simulate proportion of

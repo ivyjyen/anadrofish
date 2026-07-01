@@ -1,8 +1,7 @@
 #' @title Make spawnrecruit vectors for American eel
 #'
 #' @description Simulate proportion of population that is mature
-#' spawners from sex-specific maturity schedules for river herring
-#' in \code{\link{maki_pars}}.
+#' spawners from sex-specific maturity schedules for American eel.
 #'
 #' @details The primary use of this function is to simulate proportion of
 #' mature spawners at each age in a population of American eel based on
@@ -31,7 +30,7 @@
 #' benchmark stock assessment and peer-review report. ASMFC, Arlington, VA.
 #' URL: https://asmfc.org/wp-content/uploads/2024/11/AmEelBenchmarkStockAssessment_PeerReviewReport_Aug2023.pdf
 #'
-#' @examples make_spawnrecruit_eel(river = "Hudson", sex = "female")
+#' @examples make_spawnrecruit_eel(river = "Hudson", species = "EEL", sex = "female")
 #'
 #' @export
 #'
@@ -72,35 +71,34 @@ make_spawnrecruit_eel <- function(river,
     )
     
     if (missing(sex)) {
-      max_age <- make_maxage(river, custom_habitat = custom_habitat)
+      max_age <- make_maxage(
+          river = river, species = species, custom_habitat = custom_habitat)
       probs <- as.numeric(
-        colMeans(anadrofish::maturity[
-          anadrofish::maturity$region == region, 3:(2 + max_age)
+        colMeans(anadrofish::maturity_eel[
+          anadrofish::maturity_eel$region == region, 4:(3 + max_age)
         ])
       )
     }
     
     if (!missing(sex)) {
-      max_age <- make_maxage(
-        river = river, sex = sex, species = "EEL",
-        custom_habitat = custom_habitat
-      )
+        max_age <- make_maxage(
+            river = river, species = species, custom_habitat = custom_habitat)
         
       if (sex == "female") {
         probs <- as.numeric(
-          anadrofish::maturity[
-            anadrofish::maturity$region == region &
-              anadrofish::maturity$sex == "F", 3:(2 + max_age)
-          ]
+          colMeans(anadrofish::maturity_eel[
+            anadrofish::maturity_eel$region == region &
+              anadrofish::maturity_eel$sex == "F", 4:(3 + max_age)
+          ])
         )
       }
         
       if (sex == "male") {
         probs <- as.numeric(
-          anadrofish::maturity[
-            anadrofish::maturity$region == region &
-              anadrofish::maturity$sex == "M", 3:(2 + max_age)
-          ]
+          colMeans(anadrofish::maturity_eel[
+            anadrofish::maturity_eel$region == region &
+              anadrofish::maturity_eel$sex == "M", 4:(3 + max_age)
+          ])
         )
       }
     }

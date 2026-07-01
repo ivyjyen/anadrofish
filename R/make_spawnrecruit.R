@@ -110,7 +110,7 @@ make_spawnrecruit <- function(river,
   
   if (species == "EEL") {
     probs <- make_spawnrecruit_eel(
-      river = river, sex = sex,
+      river = river, sex = sex, species = species,
       custom_habitat = custom_habitat
     )
   }

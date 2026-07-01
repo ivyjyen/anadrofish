@@ -22,8 +22,8 @@ male and female maximum ages is returned for American shad,
 or pooled sex data used for river herring.}
 
 \item{species}{Species for which population dynamics will be simulated.
-Choices include American shad (\code{"AMS"}), alewife (\code{"ALE"}), and
-blueback herring (\code{"BBH"}).}
+Choices include American shad (\code{"AMS"}), alewife (\code{"ALE"}),
+blueback herring (\code{"BBH"}), and American eel (\code({"EEL"}).}
 
 \item{custom_habitat}{A dataframe containing columns corresponding to the
 those in the output from \code{\link{custom_habitat_template}}. The default,
