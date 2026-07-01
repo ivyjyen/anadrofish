@@ -7,8 +7,8 @@
 #' \code{\link{get_rivers}}.
 #'
 #' @param species Species for which population dynamics will be simulated.
-#' Choices include American shad (\code{"AMS"}), alewife (\code{"ALE"}), and
-#' blueback herring (\code{"BBH"}).
+#' Choices include American shad (\code{"AMS"}), alewife (\code{"ALE"}),
+#' blueback herring (\code{"BBH"}) and American eel (\code{"EEL"}).
 #'
 #' @param custom_habitat A dataframe containing columns corresponding to the
 #' those in the output from custom_habitat_template(). NEED TO ADD LINK.
@@ -17,20 +17,20 @@
 #'
 #' @export
 #'
-make_lat <- function(river, species = c("AMS", "ALE", "BBH"),
+make_lat <- function(river, species = c("AMS", "ALE", "BBH", "EEL"),
                      custom_habitat = NULL) {
   # Error handling
   # Species error handling
   if (missing(species)) {
     stop("
 
-    Argument 'species' must be one of 'ALE', 'AMS', or 'BBH'.")
+    Argument 'species' must be one of 'ALE', 'AMS', 'BBH', or 'EEL'.")
   }
 
-  if (!species %in% c("ALE", "AMS", "BBH")) {
+  if (!species %in% c("ALE", "AMS", "BBH", "EEL")) {
     stop("
 
-    Argument 'species' must be one of 'ALE', 'AMS', or 'BBH'.")
+    Argument 'species' must be one of 'ALE', 'AMS', 'BBH', 'EEL'.")
   }
 
   # River error handling
@@ -62,6 +62,9 @@ make_lat <- function(river, species = c("AMS", "ALE", "BBH"),
     }
     if (species == "BBH") {
       lat <- anadrofish::habitat_bbh$Latitude[anadrofish::habitat_bbh$River_huc == river][1]
+    }
+    if (species == "EEL") {
+      lat <- anadrofish::habitat_eel$Latitude[anadrofish::habitat_bbh$River_huc == river][1]
     }
   } else {
     lat <- custom_habitat$lat[1]

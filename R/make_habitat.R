@@ -6,8 +6,8 @@
 #' @param river Character string specifying river name
 #'
 #' @param species Species for which population dynamics will be simulated.
-#' Choices include American shad (\code{"AMS"}), alewife (\code{"ALE"}), and
-#' blueback herring (\code{"BBH"}).
+#' Choices include American shad (\code{"AMS"}), alewife (\code{"ALE"}),
+#' blueback herring (\code{"BBH"}), and American eel (\code{"EEL"}).
 #'
 #' @param upstream Proportional upstream passage through dams. A numeric vector
 #' of length 1 or length matching the number of rows in habitat data for
@@ -26,7 +26,7 @@
 #' @export
 #'
 make_habitat <- function(river,
-                         species = c("AMS", "ALE", "BBH"),
+                         species = c("AMS", "ALE", "BBH", "EEL"),
                          upstream,
                          custom_habitat = NULL) {
   # Error handling
@@ -34,13 +34,13 @@ make_habitat <- function(river,
   if (missing(species)) {
     stop("
 
-    Argument 'species' must be one of 'ALE', 'AMS', or 'BBH'.")
+    Argument 'species' must be one of 'ALE', 'AMS', 'BBH', or 'EEL'.")
   }
 
-  if (!species %in% c("ALE", "AMS", "BBH")) {
+  if (!species %in% c("ALE", "AMS", "BBH", "EEL")) {
     stop("
 
-    Argument 'species' must be one of 'ALE', 'AMS', or 'BBH'.")
+    Argument 'species' must be one of 'ALE', 'AMS', 'BBH', or 'EEL'.")
   }
 
   # River error handling
@@ -108,6 +108,22 @@ make_habitat <- function(river,
       # Get functional upstream habitat based on passage rate(s)
       units$functional_upstream <- units$Hab_sqkm * units$p_to_habitat
 
+      # Calculate habitat surface acres from the
+      # sum of functional habitat in the subset
+      acres <- 247.105 * sum(units$functional_upstream, na.rm = TRUE)
+    }
+    
+    if (species == "EEL") {
+      # Select habitat units based on huc_code
+      # Contemporary habitat data subset
+      units <- anadrofish::habitat_eel[anadrofish::habitat_eel$River_huc == river, ]
+      
+      # Calculate passage to habitat segment
+      units$p_to_habitat <- upstream^units$DamOrder
+      
+      # Get functional upstream habitat based on passage rate(s)
+      units$functional_upstream <- units$Hab_sqkm * units$p_to_habitat
+      
       # Calculate habitat surface acres from the
       # sum of functional habitat in the subset
       acres <- 247.105 * sum(units$functional_upstream, na.rm = TRUE)

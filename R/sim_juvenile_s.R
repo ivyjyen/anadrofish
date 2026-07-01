@@ -3,7 +3,7 @@
 #' @description Function used to simulate juvenile (hatch-to-outmigrant)
 #' survival from daily rates.
 #'
-#' @param species Species used for simulation ("AMS", "ALE", or "BBH").
+#' @param species Species used for simulation ("AMS", "ALE", "BBH", or "EEL").
 #'
 #' @return A numeric vector of length 1.
 #'
@@ -30,18 +30,18 @@
 #'
 #' @export
 #'
-sim_juvenile_s <- function(species = c("AMS", "ALE", "BBH")) {
+sim_juvenile_s <- function(species = c("AMS", "ALE", "BBH", "EEL")) {
   # Species error handling
   if (missing(species)) {
     stop("
 
-    Argument 'species' must be one of 'AMS', 'ALE', or 'BBH'.")
+    Argument 'species' must be one of 'AMS', 'ALE', 'BBH', or 'EEL'.")
   }
 
-  if (!species %in% c("AMS", "ALE", "BBH")) {
+  if (!species %in% c("AMS", "ALE", "BBH", "EEL")) {
     stop("
 
-    Argument 'species' must be one of 'AMS', 'ALE', or 'BBH'.")
+    Argument 'species' must be one of 'AMS', 'ALE', 'BBH', or 'EEL'.")
   }
 
   if (species == "AMS") {
@@ -72,6 +72,13 @@ sim_juvenile_s <- function(species = c("AMS", "ALE", "BBH")) {
     # Overton et al. (2012)
     Zd <- rtrunc_norm(n = 1, a = 0, mean = 0.205, sd = 0.048^2)
     juvenile_s <- exp(-Zd * 30)
+  }
+  
+  if (species == "EEL") {
+    # Bonhommeau et al. (2009) less than 0.2% A. anguilla larvae survive the trans-Atlantic migration
+
+    juvenile_s <- 0.002
+    
   }
 
   return(juvenile_s)

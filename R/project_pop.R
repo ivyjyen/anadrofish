@@ -16,8 +16,8 @@
 #' @param max_age Numeric indicating maximum age of spawning fish.
 #'
 #' @param species Species for which population dynamics will be simulated.
-#' Choices include American shad (\code{"AMS"}), alewife (\code{"ALE"}), and
-#' blueback herring (\code{"BBH"}).
+#' Choices include American shad (\code{"AMS"}), alewife (\code{"ALE"}),
+#' blueback herring (\code{"BBH"}) and American eel (\code{"EEL"}).
 #'
 #' @return A numeric vector of age-structured abundance in time t + 1.
 #'
@@ -26,19 +26,19 @@
 #' @export
 #'
 project_pop <- function(x, age0, nM, fM, max_age,
-                        species = c("AMS", "ALE", "BBH")) {
+                        species = c("AMS", "ALE", "BBH", "EEL")) {
   # Error handling
   # Species error handling
   if (missing(species)) {
     stop("
 
-    Argument 'species' must be one of 'ALE', 'AMS', or 'BBH'.")
+    Argument 'species' must be one of 'ALE', 'AMS', 'BBH', or 'EEL'.")
   }
 
-  if (!species %in% c("ALE", "AMS", "BBH")) {
+  if (!species %in% c("ALE", "AMS", "BBH", "EEL")) {
     stop("
 
-    Argument 'species' must be one of 'ALE', 'AMS', or 'BBH'.")
+    Argument 'species' must be one of 'ALE', 'AMS', 'BBH', or 'EEL'.")
   }
 
   # Calculate total mortality
@@ -50,7 +50,7 @@ project_pop <- function(x, age0, nM, fM, max_age,
     s[1] <- (1 - (1 - exp(-nM)))^3
   }
 
-  if (species %in% c("ALE", "BBH")) {
+  if (species %in% c("ALE", "BBH", "EEL")) {
     s <- 1 - (1 - exp(-Z))
   }
 

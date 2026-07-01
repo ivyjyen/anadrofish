@@ -11,8 +11,8 @@
 #' can be seen using \code{\link{get_rivers}}.
 #'
 #' @param species Species for which population dynamics will be simulated.
-#' Choices include American shad (\code{"AMS"}), alewife (\code{"ALE"}), and
-#' blueback herring (\code{"BBH"}).
+#' Choices include American shad (\code{"AMS"}), alewife (\code{"ALE"}),
+#' blueback herring (\code{"BBH"}), and American eel (\code{"EEL"}).
 #'
 #' @param iteroparity Optional argument for rate of iteroparity. Values from
 #' \code{\link{make_iteroparity}} can be passed directly to this function, or
@@ -47,7 +47,7 @@
 #' @export
 #'
 make_postspawn <- function(river = river,
-                           species = c("AMS", "ALE", "BBH"),
+                           species = c("AMS", "ALE", "BBH","EEL"),
                            iteroparity = NULL,
                            nM = NULL,
                            custom_habitat = NULL) {
@@ -56,13 +56,13 @@ make_postspawn <- function(river = river,
   if (missing(species)) {
     stop("
 
-    Argument 'species' must be one of 'ALE', 'AMS', or 'BBH'.")
+    Argument 'species' must be one of 'ALE', 'AMS', 'BBH', or 'EEL'.")
   }
 
-  if (!species %in% c("ALE", "AMS", "BBH")) {
+  if (!species %in% c("ALE", "AMS", "BBH", "EEL")) {
     stop("
 
-    Argument 'species' must be one of 'ALE', 'AMS', or 'BBH'.")
+    Argument 'species' must be one of 'ALE', 'AMS', 'BBH', or 'EEL'.")
   }
 
   # River error handling
@@ -90,6 +90,10 @@ make_postspawn <- function(river = river,
         make_lat(river, species = "AMS", custom_habitat = custom_habitat)
       )
     }
+  }
+  
+  if (species == "EEL") {
+      iteroparity <- 0
   }
 
   if (is.null(nM)) {
