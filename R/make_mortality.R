@@ -169,14 +169,14 @@ make_mortality <- function(river,
           if (sex == "female") {
               nM <- anadrofish::mortality_eel$M[
                   anadrofish::mortality_eel$region == region &
-                      anadrofish::mortality_eel$sex == "Female"
+                      anadrofish::mortality_eel$sex == "Pooled"
               ]
           }
           
           if (sex == "male") {
               nM <- anadrofish::mortality_eel$M[
                   anadrofish::mortality_eel$region == region &
-                      anadrofish::mortality_eel$sex == "Male"
+                      anadrofish::mortality_eel$sex == "Pooled"
               ]
           }
       }

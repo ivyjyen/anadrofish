@@ -238,7 +238,10 @@ sim_pop <- function(
 
   # Unlist function args to internal environment
   list2env(mget(names(formals(sim_pop))), envir = .sim_pop)
-
+  
+  # DEBUG: expose env to global env
+  assign(".sim_pop_debug", .sim_pop, envir = .GlobalEnv)
+  
   # Argument matching for output_years
   .sim_pop$output_years <- match.arg(output_years)
 
