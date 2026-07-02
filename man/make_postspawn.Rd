@@ -6,7 +6,7 @@
 \usage{
 make_postspawn(
   river = river,
-  species = c("AMS", "ALE", "BBH"),
+  species = c("AMS", "ALE", "BBH", "EEL"),
   iteroparity = NULL,
   nM = NULL,
   custom_habitat = NULL
@@ -18,8 +18,8 @@ returned. Required argument with no default value. Available rivers
 can be seen using \code{\link{get_rivers}}.}
 
 \item{species}{Species for which population dynamics will be simulated.
-Choices include American shad (\code{"AMS"}), alewife (\code{"ALE"}), and
-blueback herring (\code{"BBH"}).}
+Choices include American shad (\code{"AMS"}), alewife (\code{"ALE"}),
+blueback herring (\code{"BBH"}), and American eel (\code{"EEL"}).}
 
 \item{iteroparity}{Optional argument for rate of iteroparity. Values from
 \code{\link{make_iteroparity}} can be passed directly to this function, or

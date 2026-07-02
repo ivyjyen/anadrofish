@@ -38,19 +38,27 @@ make_pop <- function(species, max_age, nM, fM, n_init) {
   if (species == "AMS") {
     s <- rep(1 - (1 - exp(-Z)), max_age)
     s[1] <- (1 - (1 - exp(-nM)))^4
+    
+    # Multiply by an arbitrarily large
+    # number to get a population
+    pop <- n_init * cumprod(s)
   }
 
   if (species %in% c("ALE", "BBH")) {
     s <- 1 - (1 - exp(-Z))
+    
+    # Multiply by an arbitrarily large
+    # number to get a population
+    pop <- n_init * cumprod(s)
   }
   
   if (species == "EEL") {
     s <- 1 - (1 - exp(-Z))
+    
+    # Multiply by an arbitrarily large
+    # number to get a population
+    pop <- n_init * cumprod(s)
   }
-
-  # Multiply by an arbitrarily large
-  # number to get a population
-  pop <- n_init * cumprod(s)
 
   # Return the result to R
   return(pop)

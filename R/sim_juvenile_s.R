@@ -75,9 +75,11 @@ sim_juvenile_s <- function(species = c("AMS", "ALE", "BBH", "EEL")) {
   }
   
   if (species == "EEL") {
+    # ASMFC (2023) 2% Glass eel survival
     # Bonhommeau et al. (2009) less than 0.2% A. anguilla larvae survive the trans-Atlantic migration
+    # Wang and Tzeng (2000) https://www.sciencedirect.com/science/article/abs/pii/S0165783600001466: 200 days
 
-    juvenile_s <- 0.002
+    juvenile_s <- 0.02
     
   }
 

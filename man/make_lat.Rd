@@ -4,15 +4,15 @@
 \alias{make_lat}
 \title{Retrieve latitude for American shad rivers.}
 \usage{
-make_lat(river, species = c("AMS", "ALE", "BBH"), custom_habitat = NULL)
+make_lat(river, species = c("AMS", "ALE", "BBH", "EEL"), custom_habitat = NULL)
 }
 \arguments{
 \item{river}{Character string specifying river name. See
 \code{\link{get_rivers}}.}
 
 \item{species}{Species for which population dynamics will be simulated.
-Choices include American shad (\code{"AMS"}), alewife (\code{"ALE"}), and
-blueback herring (\code{"BBH"}).}
+Choices include American shad (\code{"AMS"}), alewife (\code{"ALE"}),
+blueback herring (\code{"BBH"}) and American eel (\code{"EEL"}).}
 
 \item{custom_habitat}{A dataframe containing columns corresponding to the
 those in the output from custom_habitat_template(). NEED TO ADD LINK.}

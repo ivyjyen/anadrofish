@@ -11,6 +11,7 @@ make_mortality(
   river,
   sex = c(NULL, "female", "male"),
   species = c("AMS", "ALE", "BBH", "EEL"),
+  max_age,
   custom_habitat = NULL
 )
 }

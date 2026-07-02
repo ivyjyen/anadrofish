@@ -44,6 +44,7 @@
 make_mortality <- function(river,
                            sex = c(NULL, "female", "male"),
                            species = c("AMS", "ALE", "BBH", "EEL"),
+                           max_age,
                            custom_habitat = NULL) {
   if (!missing(species)) species <- match.arg(species)
 
@@ -182,5 +183,5 @@ make_mortality <- function(river,
       }
   }
 
-  return(nM)
+  return(nM[1:max_age])
 }

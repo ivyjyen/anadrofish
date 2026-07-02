@@ -36,8 +36,8 @@ assemble_output <- function(rows, age_structured_output, output_years) {
   # -- List columns: expand each to a matrix, pad to 13 cols --
   list_dfs <- lapply(list_names, function(nm) {
     mat <- do.call(rbind, lapply(rows, function(r) unlist(r[[nm]])))
-    if (ncol(mat) < 13) {
-      mat <- cbind(mat, matrix(0, nrow = nrow(mat), ncol = 13 - ncol(mat)))
+    if (ncol(mat) < 16) {
+      mat <- cbind(mat, matrix(0, nrow = nrow(mat), ncol = 16 - ncol(mat)))
     }
     mat <- round(mat)
     mat[is.na(mat)] <- 0

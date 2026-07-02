@@ -8,14 +8,15 @@ make_pop(species, max_age, nM, fM, n_init)
 }
 \arguments{
 \item{species}{Species for which population dynamics will be simulated.
-Choices include American shad (\code{"AMS"}), alewife (\code{"ALE"}), and
-blueback herring (\code{"BBH"}).}
+Choices include American shad (\code{"AMS"}), alewife (\code{"ALE"}), 
+blueback herring (\code{"BBH"}), and American eel (\code{"EEL"}).}
 
-\item{max_age}{The maximum age of fish in the population(s). A numeric vector of length 1.}
+\item{max_age}{The maximum age of fish in the population(s).
+A numeric vector of length 1.}
 
 \item{nM}{Instantaneous natural mortality rate.
 A numeric vector of length for (\code{"AMS"} or a vector of
-length \code{max_age} for \code{"ALE"} and \code{"BBH"}.}
+length \code{max_age} for \code{"ALE"}, \code{"BBH"}, and (\code{"EEL"}).}
 
 \item{fM}{Instantaneous fishing mortality rate.
 A numeric vector of length 1.}

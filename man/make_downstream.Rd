@@ -6,7 +6,7 @@
 \usage{
 make_downstream(
   river,
-  species = c("AMS", "ALE", "BBH"),
+  species = c("AMS", "ALE", "BBH", "EEL"),
   downstream,
   upstream,
   historical = FALSE,
@@ -17,8 +17,8 @@ make_downstream(
 \item{river}{Character string specifying river name.}
 
 \item{species}{Species for which population dynamics will be simulated.
-Choices include American shad (\code{"AMS"}), alewife (\code{"ALE"}), and
-blueback herring (\code{"BBH"}).}
+Choices include American shad (\code{"AMS"}), alewife (\code{"ALE"}),
+blueback herring (\code{"BBH"}), and American eel (\code{"EEL"}).}
 
 \item{downstream}{Numeric indicating proportional downstream survival
 through a single dam.}

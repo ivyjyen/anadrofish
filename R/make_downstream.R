@@ -168,6 +168,7 @@ make_downstream <- function(river,
       
       # The ratio is survival rate
       s_downstream <- sum(units$p_habitat * ((downstream^units$DamOrder)))
+      p_habitat <- units$p_habitat
     }
 
     # Custom habitat routine

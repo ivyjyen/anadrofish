@@ -6,7 +6,7 @@
 \usage{
 make_habitat(
   river,
-  species = c("AMS", "ALE", "BBH"),
+  species = c("AMS", "ALE", "BBH", "EEL"),
   upstream,
   custom_habitat = NULL
 )
@@ -15,8 +15,8 @@ make_habitat(
 \item{river}{Character string specifying river name}
 
 \item{species}{Species for which population dynamics will be simulated.
-Choices include American shad (\code{"AMS"}), alewife (\code{"ALE"}), and
-blueback herring (\code{"BBH"}).}
+Choices include American shad (\code{"AMS"}), alewife (\code{"ALE"}),
+blueback herring (\code{"BBH"}), and American eel (\code{"EEL"}).}
 
 \item{upstream}{Proportional upstream passage through dams. A numeric vector
 of length 1 or length matching the number of rows in habitat data for

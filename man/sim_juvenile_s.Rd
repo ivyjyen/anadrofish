@@ -4,10 +4,10 @@
 \alias{sim_juvenile_s}
 \title{Juvenile (hatch-to-outmigrant) survival}
 \usage{
-sim_juvenile_s(species = c("AMS", "ALE", "BBH"))
+sim_juvenile_s(species = c("AMS", "ALE", "BBH", "EEL"))
 }
 \arguments{
-\item{species}{Species used for simulation ("AMS", "ALE", or "BBH").}
+\item{species}{Species used for simulation ("AMS", "ALE", "BBH", or "EEL").}
 }
 \value{
 A numeric vector of length 1.
