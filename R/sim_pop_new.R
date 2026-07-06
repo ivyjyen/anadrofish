@@ -714,8 +714,17 @@ sim_pop <- function(
           sr = .sim_pop$sr
         )
         
-        # Calculate recruits
-        .sim_pop$recruits_f_age <- .sim_pop$spawners_down * .sim_pop$fec
+        # Calculate density-dependent recruitment from Beverton-Holt curve
+        .sim_pop$recruits_f_age <- beverton_holt(
+          a = .sim_pop$fec,
+          S = .sim_pop$spawners,
+          b = .sim_pop$b,
+          acres = .sim_pop$acres,
+          age_structured = TRUE
+        )
+        
+        # # Calculate recruits
+        # .sim_pop$recruits_f_age <- .sim_pop$spawners_down * .sim_pop$fec
         
         # Apply mortality for 1 year
         # Sum recruits to get age0 fish
