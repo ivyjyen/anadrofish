@@ -14,14 +14,21 @@
 #'
 make_pfas_out <- function(age0_down) {
     
-    # Simulate PFAS concentration for outmigrating individuals and compute total
+  # Simulate PFAS concentration for out-migrating individuals and compute total
 
-    simulated_conc <- rlnorm(
-      n = round(age0_down),
-      meanlog = log(15),
-      sdlog = log(2)
-    )
-    # simulated_conc <- rtrunc_norm(
+  # simulated_conc <- rnorm( # Unity empirical data
+  #   n = round(age0_down),
+  #   mean = 16.88,
+  #   sd = 0.28
+  # )
+
+  simulated_conc <- rlnorm( # log distribution (Xia et al. 2024)
+    n = round(age0_down),
+    meanlog = log(15),
+    sdlog = log(2)
+  )
+
+    # simulated_conc <- rtrunc_norm( # normal distribution (Xia et al. 2024)
     #     n    = round(age0_down),
     #     a    = 0.05,   # lower bound
     #     b    = 50,     # upper bound
