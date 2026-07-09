@@ -110,7 +110,7 @@ make_eggs_eel <- function(river, species = "EEL",
         eggs[[i]] <- alpha_fec[i]*tl^beta_fec[i]
     }
     
-    eggs <- apply(do.call(rbind, eggs), 2, mean) * sample(1:1, 1, replace = FALSE)
+    eggs <- apply(do.call(rbind, eggs), 2, mean) * sample(1:3, 1, replace = FALSE)
 
     return(eggs)
 }

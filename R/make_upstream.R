@@ -82,10 +82,12 @@ make_upstream <- function(river,
     units$functional_upstream <- units$Hab_sqkm * units$p_upstream
     
     # Calculate proportion of habitat in each segment of available
-    units$p_habitat <- units$functional_upstream / sum(units$functional_upstream)
+    acres <- sum(units$Hab_sqkm)
+    
+    units$p_habitat <- units$functional_upstream / acres
     
     # The ratio is survival rate
-    s_upstream <- sum(units$p_habitat * ((upstream^units$DamOrder)))
+    s_upstream <- sum(units$p_habitat)
   } 
     
   # Custom habitat routine
@@ -100,10 +102,10 @@ make_upstream <- function(river,
     units$functional_upstream <- units$Hab_sqkm * units$p_upstream
     
     # Calculate proportion of habitat in each segment of available
-    units$p_habitat <- units$functional_upstream / sum(units$functional_upstream)
+    units$p_habitat <- units$fuctional_upstream / sum(units$Hab_sqkm)
     
     # The ratio is survival rate
-    s_upstream <- sum(units$p_habitat * ((upstream^units$DamOrder)))
+    s_upstream <- sum(units$p_habitat)
   }
   
   return(s_upstream)

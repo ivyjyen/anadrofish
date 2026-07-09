@@ -746,7 +746,7 @@ sim_pop <- function(
           
           .sim_pop$pop <- project_pop(
             x = .sim_pop$pop,
-            age0 = .sim_pop$age0_up,
+            age0 = .sim_pop$age0,
             nM = .sim_pop$nM,
             fM = .sim_pop$fM,
             max_age = .sim_pop$max_age,
@@ -756,7 +756,7 @@ sim_pop <- function(
         if (sex_specific == TRUE) {
           .sim_pop$pop_m <- project_pop(
             x = .sim_pop$pop_m,
-            age0 = .sim_pop$age0_up * (1 - .sim_pop$sr),
+            age0 = .sim_pop$age0 * (1 - .sim_pop$sr),
             nM = .sim_pop$nM_m,
             fM = .sim_pop$fM,
             max_age = .sim_pop$max_age_m,
@@ -765,7 +765,7 @@ sim_pop <- function(
           
           .sim_pop$pop_f <- project_pop(
             x = .sim_pop$pop_f,
-            age0 = .sim_pop$age0_up * .sim_pop$sr,
+            age0 = .sim_pop$age0 * .sim_pop$sr,
             nM = .sim_pop$nM_f,
             fM = .sim_pop$fM,
             max_age = .sim_pop$max_age_f,

@@ -4,7 +4,11 @@
 \alias{make_output_row}
 \title{Make one row of simulation output}
 \usage{
-make_output_row(.sim_pop, sex_specific = FALSE)
+make_output_row(
+  .sim_pop,
+  species = c("AMS", "ALE", "BBH", "EEL"),
+  sex_specific = FALSE
+)
 }
 \arguments{
 \item{.sim_pop}{The simulation environment.}
