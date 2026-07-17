@@ -32,7 +32,7 @@
 #'
 #' @export
 #'
-make_eggs_eel <- function(river, species = "EEL",
+make_eggs_eel <- function(river, species = "EEL", length,
                          custom_habitat = NULL) {
     # Error handling ----
     # Require species to be specified from vector of choices
@@ -63,54 +63,12 @@ make_eggs_eel <- function(river, species = "EEL",
         custom_habitat = custom_habitat
     )
     
-    # Get maximum age
-    max_age <- make_maxage(
-        river = river, sex = "female", species = species,
-        custom_habitat = custom_habitat
-    )
-    
-    # Get growth params for region
-    growth_parms <- anadrofish::vbgf_eel[anadrofish::vbgf_eel$Region == region, ]
-    
-    Linf <- rtrunc_norm(1, a = 0, b = Inf, mean = growth_parms$linf, sd = growth_parms$linf.se)
-    K <- rtrunc_norm(1, a = 0, b = 1, mean = growth_parms$k, sd = growth_parms$k.se)
-    t0 <- rnorm(1, mean = growth_parms$t0, sd = growth_parms$t0.se)
-    
-    # Get sequence of ages
-    ages <- seq(1, max_age, 1)
-    
-    # Predict total length at age
-    tl <- Linf * (1 - exp(-K * (ages - t0)))
-    
-    # Get length-weight regression parameters
-    alpha <- unlist(anadrofish::lw_pars_eel[
-        anadrofish::lw_pars_eel$Region == region,
-        c("alpha", "alpha.se")
-    ])
-    
-    beta <- unlist(anadrofish::lw_pars_eel[
-        anadrofish::lw_pars_eel$Region == region,
-        c("beta", "beta.se")
-    ])
-    
-    alpha <- rnorm(1, alpha[1], alpha[2])
-    beta <- rnorm(1, beta[1], beta[2])
-    
-    # Predict mass (g) from tl (mm)
-    mass <- alpha * tl^beta
-    
     # Sample parameters and use to calculate fecundity at age
     # Barbin & McCleave (1997), Tremblay (2009), Wenner & Musick (1974)
-    alpha_fec <- anadrofish::fec_eel[, "alpha"]
-    beta_fec <- anadrofish::fec_eel[, "beta"]
+    alpha_fec <- anadrofish::fec_eel[fec_eel$region == region, "alpha"]
+    beta_fec <- anadrofish::fec_eel[fec_eel$region == region, "beta"]
     
-    eggs <- vector(mode = "list", length = length(alpha_fec))
-    
-    for (i in 1:length(alpha_fec)) {
-        eggs[[i]] <- alpha_fec[i]*tl^beta_fec[i]
-    }
-    
-    eggs <- apply(do.call(rbind, eggs), 2, mean) * sample(1:3, 1, replace = FALSE)
+    eggs <- alpha_fec * length^beta_fec
 
     return(eggs)
 }

@@ -8,6 +8,7 @@ make_spawnrecruit_eel(
   river,
   sex = c("male", "female"),
   species = "EEL",
+  length,
   custom_habitat = NULL
 )
 }

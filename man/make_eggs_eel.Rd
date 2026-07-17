@@ -4,7 +4,7 @@
 \alias{make_eggs_eel}
 \title{Simulate number of eggs per fish for American eel}
 \usage{
-make_eggs_eel(river, species = "EEL", custom_habitat = NULL)
+make_eggs_eel(river, species = "EEL", length, custom_habitat = NULL)
 }
 \arguments{
 \item{species}{Species for which population dynamics will be simulated.

@@ -104,42 +104,69 @@ sim_pop_3river_eel <- function(
     e$govt   <- get_govt(e$river, species, custom_habitat = custom_habitat)
     
     if (sex_specific) {
+      
       e$max_age_m <- if (is.null(max_age)) {
         make_maxage(river = e$river, sex = "male", species = species, custom_habitat = custom_habitat)
       } else max_age
+      
       e$max_age_f <- if (is.null(max_age)) {
         make_maxage(river = e$river, sex = "female", species = species, custom_habitat = custom_habitat)
       } else max_age
       
+      e$length_m <-
+        make_length(river = e$river, species = species, custom_habitat = custom_habitat)
+      
+      e$length_f <-
+        make_length(river = e$river, species = species, custom_habitat = custom_habitat)
+      
+      e$mass_m <-
+        make_mass(river = e$river, species = species, length = e$length_m, custom_habitat = custom_habitat)
+      
+      e$mass_f <-
+        make_mass(river = e$river, species = species, length = e$length_f, custom_habitat = custom_habitat)
+      
+      e$spawnRecruit_m <- if (is.null(spawnRecruit)) {
+        make_spawnrecruit_eel(e$river, sex = "male", species = species, length = e$length_m, custom_habitat = custom_habitat)
+      } else spawnRecruit
+      
+      e$spawnRecruit_f <- if (is.null(spawnRecruit)) {
+        make_spawnrecruit_eel(e$river, sex = "female", species = species, length = e$length_f, custom_habitat = custom_habitat)
+      } else spawnRecruit
+    
       e$nM_m <- if (is.null(nM)) {
         make_mortality(river = e$river, sex = "male", species = species,
                        max_age = e$max_age_m, custom_habitat = custom_habitat)
       } else nM
+      
       e$nM_f <- if (is.null(nM)) {
         make_mortality(river = e$river, sex = "female", species = species,
                        max_age = e$max_age_f, custom_habitat = custom_habitat)
       } else nM
       
-      e$spawnRecruit_m <- if (is.null(spawnRecruit)) {
-        make_spawnrecruit(e$river, sex = "male", species = species, custom_habitat = custom_habitat)
-      } else spawnRecruit
-      e$spawnRecruit_f <- if (is.null(spawnRecruit)) {
-        make_spawnrecruit(e$river, sex = "female", species = species, custom_habitat = custom_habitat)
-      } else spawnRecruit
     } else {
+      
       e$max_age <- if (is.null(max_age)) {
         make_maxage(river = e$river, species = species, custom_habitat = custom_habitat)
       } else max_age
+      
+      e$length <-
+        make_length(river = e$river, species = species, custom_habitat = custom_habitat)
+
+      e$mass <-
+        make_mass(river = e$river, species = species, length = e$length, custom_habitat = custom_habitat)
+
+      e$spawnRecruit <- if (is.null(spawnRecruit)) {
+        make_spawnrecruit_eel(river = e$river, species = species, length = e$length, custom_habitat = custom_habitat)
+      } else spawnRecruit
+
       e$nM <- if (is.null(nM)) {
         make_mortality(river = e$river, sex = NULL, species = species,
                        max_age = e$max_age, custom_habitat = custom_habitat)
       } else nM
-      e$spawnRecruit <- if (is.null(spawnRecruit)) {
-        make_spawnrecruit(e$river, species = species, custom_habitat = custom_habitat)
-      } else spawnRecruit
+      
     }
     
-    e$eggs       <- if (is.null(eggs)) make_eggs(e$river, species = species, custom_habitat = custom_habitat) else eggs
+    e$eggs       <- if (is.null(eggs)) make_eggs_eel(e$river, species = species, length = e$length, custom_habitat = custom_habitat) else eggs
     e$s_juvenile <- if (is.null(s_juvenile)) sim_juvenile_s(species = species) else s_juvenile
     
     e$acres          <- make_habitat(river = e$river, species = species, upstream = upstream, custom_habitat = custom_habitat)
@@ -148,9 +175,11 @@ sim_pop_3river_eel <- function(
     
     environment(make_pop) <- e
     if (sex_specific) {
+      
       e$pop_m <- make_pop(species = species, max_age = e$max_age_m, nM = e$nM_m, fM = fM, n_init = n_init * (1 - sr))
       e$pop_f <- make_pop(species = species, max_age = e$max_age_f, nM = e$nM_f, fM = fM, n_init = n_init * sr)
     } else {
+      
       e$pop <- make_pop(species = species, max_age = e$max_age, nM = e$nM, fM = fM, n_init = n_init)
     }
     
@@ -173,6 +202,7 @@ sim_pop_3river_eel <- function(
   for (t in seq_len(nyears)) {
     
     age0_riv <- numeric(n_riv)  # each river's own RAW (pre-upstream) age0 this year
+    hab_prop <- numeric(n_riv)  # proportion of habitat per river
     
     for (i in seq_len(n_riv)) {
       e <- envs[[i]]
@@ -201,6 +231,8 @@ sim_pop_3river_eel <- function(
       
       age0_riv[i] <- e$age0
       
+      hab_prop[i] <- e$acres
+      
       # each river's own upstream passage survival, applied below to the
       # SHARED/averaged age0 rather than to each river's own raw age0
       e$s_upstream_j <- make_upstream(
@@ -208,16 +240,18 @@ sim_pop_3river_eel <- function(
       )
     }
     
-    # ---- shared input across rivers: mean of RAW age0 (pre-upstream-passage) ----
-    age0_shared_raw <- sum(age0_riv) / n_riv
+    # ---- distribute across rivers by proportion of habitat (pre-upstream-passage) ----
+    age0_shared <- sum(age0_riv)
     
+    hab_prop <- hab_prop / sum(hab_prop)
+    
+    age0_riv2 <- hab_prop * age0_shared
 
-    
     for (i in seq_len(n_riv)) {
       e <- envs[[i]]
       
       # apply this river's own upstream passage survival to the shared age0
-      e$age0_up <- age0_shared_raw * e$s_upstream_j
+      e$age0_up <- age0_riv2[i] * e$s_upstream_j
       
       # separate density-dependent mortality stage: incoming age-0 in-migrants
       # (age0_up) compete with the standing population (pop, not spawners --

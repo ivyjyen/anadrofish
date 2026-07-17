@@ -37,6 +37,7 @@
 make_spawnrecruit_eel <- function(river,
                                  sex = c("male", "female"),
                                  species = "EEL",
+                                 length, # remove
                                  custom_habitat = NULL) {
     # Error handling ----
     # Require sex to be specified from vector of choices
@@ -81,10 +82,11 @@ make_spawnrecruit_eel <- function(river,
     }
     
     if (!missing(sex)) {
-        max_age <- make_maxage(
-            river = river, species = species, custom_habitat = custom_habitat)
-        
+
       if (sex == "female") {
+        max_age <- make_maxage(
+          river = river, species = species, sex = "female", custom_habitat = custom_habitat)
+        
         probs <- as.numeric(
           colMeans(anadrofish::maturity_eel[
             anadrofish::maturity_eel$region == region &
@@ -94,6 +96,9 @@ make_spawnrecruit_eel <- function(river,
       }
         
       if (sex == "male") {
+        max_age <- make_maxage(
+          river = river, species = species, sex = "male", custom_habitat = custom_habitat)
+        
         probs <- as.numeric(
           colMeans(anadrofish::maturity_eel[
             anadrofish::maturity_eel$region == region &
