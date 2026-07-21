@@ -143,6 +143,11 @@ sim_pop_3river_eel <- function(
                        max_age = e$max_age_f, custom_habitat = custom_habitat)
       } else nM
       
+      e$eggs <- if (is.null(eggs)) {
+        make_eggs_eel(e$river, species = species, length = e$length_f,
+                      custom_habitat = custom_habitat)
+      } else eggs
+      
     } else {
       
       e$max_age <- if (is.null(max_age)) {
@@ -164,10 +169,16 @@ sim_pop_3river_eel <- function(
                        max_age = e$max_age, custom_habitat = custom_habitat)
       } else nM
       
+      e$eggs <- if (is.null(eggs)) {
+        make_eggs_eel(e$river, species = species, length = e$length,
+                      custom_habitat = custom_habitat)
+      } else eggs
+      
     }
     
-    e$eggs       <- if (is.null(eggs)) make_eggs_eel(e$river, species = species, length = e$length, custom_habitat = custom_habitat) else eggs
-    e$s_juvenile <- if (is.null(s_juvenile)) sim_juvenile_s(species = species) else s_juvenile
+    e$s_juvenile <- if (is.null(s_juvenile)) {
+      sim_juvenile_s(species = species)
+      } else s_juvenile
     
     e$acres          <- make_habitat(river = e$river, species = species, upstream = upstream, custom_habitat = custom_habitat)
     e$s_downstream   <- make_downstream(river = e$river, species = species, downstream = downstream,   upstream = upstream, custom_habitat = custom_habitat)
@@ -262,7 +273,7 @@ sim_pop_3river_eel <- function(
       # proportion to its share of the pre-limitation total.
       e$total_fw <- sum(e$pop) + e$age0_up
       e$total_fw_survivors <- beverton_holt(
-        a = 1, S = e$total_fw, b = b, acres = e$acres, age_structured = FALSE
+        a = 0.34, S = e$total_fw, b = b, acres = e$acres, age_structured = FALSE
       )
       e$age0_up <- e$total_fw_survivors * (e$age0_up / e$total_fw)
       
