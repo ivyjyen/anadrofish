@@ -157,18 +157,20 @@ make_downstream <- function(river,
       # Assign cumulative downstream passage to feature
       units$p_downstream <- downstream^units$DamOrder
       
-      # Calculate passage to habitat segment
-      units$p_to_habitat <- upstream^units$DamOrder
+      # # Calculate passage to habitat segment
+      # units$p_to_habitat <- upstream^units$DamOrder
+      # 
+      # # Available habitat
+      # units$functional_upstream <- units$Hab_sqkm * units$p_to_habitat
+      # 
+      # # Calculate proportion of habitat in each segment of available
+      # units$p_habitat <- units$functional_upstream / sum(units$functional_upstream)
+      # 
+      # # The ratio is survival rate
+      # s_downstream <- sum(units$p_habitat * ((downstream^units$DamOrder)))
+      # p_habitat <- units$p_habitat
       
-      # Available habitat
-      units$functional_upstream <- units$Hab_sqkm * units$p_to_habitat
-      
-      # Calculate proportion of habitat in each segment of available
-      units$p_habitat <- units$functional_upstream / sum(units$functional_upstream)
-      
-      # The ratio is survival rate
-      s_downstream <- sum(units$p_habitat * ((downstream^units$DamOrder)))
-      p_habitat <- units$p_habitat
+      s_downstream <- units$p_downstream
     }
 
     # Custom habitat routine

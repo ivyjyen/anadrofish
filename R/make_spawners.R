@@ -16,6 +16,17 @@
 #'
 #' @export
 #'
-make_spawners <- function(pop, probs) {
-  pop * probs
+make_spawners <- function(pop, probs, species) {
+  
+  if (species == "EEL") {
+    
+    spawners <- pop * rep(probs, each = nrow(pop))
+    
+  } else {
+    
+    spawners <- pop * probs
+    
+  }
+  
+  return(spawners)
 }

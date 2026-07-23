@@ -4,7 +4,7 @@
 \alias{make_pop}
 \title{Make population}
 \usage{
-make_pop(species, max_age, nM, fM, n_init)
+make_pop(river, species, max_age, nM, fM, n_init)
 }
 \arguments{
 \item{species}{Species for which population dynamics will be simulated.

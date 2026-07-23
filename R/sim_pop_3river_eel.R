@@ -182,16 +182,20 @@ sim_pop_3river_eel <- function(
     
     e$acres          <- make_habitat(river = e$river, species = species, upstream = upstream, custom_habitat = custom_habitat)
     e$s_downstream   <- make_downstream(river = e$river, species = species, downstream = downstream,   upstream = upstream, custom_habitat = custom_habitat)
-    e$s_downstream_j <- make_downstream(river = e$river, species = species, downstream = downstream_j, upstream = upstream, custom_habitat = custom_habitat)
+    e$prob_distrib   <- make_pop_distribution(river = e$river, species = species, upstream = upstream, downstream = downstream)
     
     environment(make_pop) <- e
     if (sex_specific) {
       
-      e$pop_m <- make_pop(species = species, max_age = e$max_age_m, nM = e$nM_m, fM = fM, n_init = n_init * (1 - sr))
-      e$pop_f <- make_pop(species = species, max_age = e$max_age_f, nM = e$nM_f, fM = fM, n_init = n_init * sr)
+      e$pop_m <- make_pop(river = river, species = species, max_age = e$max_age_m, nM = e$nM_m, fM = fM, n_init = n_init * (1 - sr))
+      e$pop_f <- make_pop(river = river, species = species, max_age = e$max_age_f, nM = e$nM_f, fM = fM, n_init = n_init * sr)
+      
+      e$pop_m <- outer(e$prob_distrib, e$pop_m, "*")
+      e$pop_f <- outer(e$prob_distrib, e$pop_f, "*")
     } else {
       
-      e$pop <- make_pop(species = species, max_age = e$max_age, nM = e$nM, fM = fM, n_init = n_init)
+      e$pop <- make_pop(river = river, species = species, max_age = e$max_age, nM = e$nM, fM = fM, n_init = n_init)
+      e$pop <- outer(e$prob_distrib, e$pop, "*")
     }
     
     # EEL-specific placeholders (as in sim_pop's EEL branch)
@@ -220,19 +224,19 @@ sim_pop_3river_eel <- function(
       e$t <- t
       
       if (sex_specific) {
-        e$spawners_m <- make_spawners(e$pop_m, probs = e$spawnRecruit_m)
-        e$spawners_f <- make_spawners(e$pop_f, probs = e$spawnRecruit_f)
-        e$spawners   <- add_unequal_vectors(e$spawners_m, e$spawners_f)
+        e$spawners_m <- make_spawners(e$pop_m, probs = e$spawnRecruit_m, species = species)
+        e$spawners_f <- make_spawners(e$pop_f, probs = e$spawnRecruit_f, species = species)
+        e$spawners   <- add_unequal_vectors(e$spawners_m, e$spawners_f) # this needs work
         
         e$pop_m <- e$pop_m - e$spawners_m
         e$pop_f <- e$pop_f - e$spawners_f
         e$pop   <- add_unequal_vectors(e$pop_m, e$pop_f)
       } else {
-        e$spawners <- make_spawners(e$pop, probs = e$spawnRecruit)
+        e$spawners <- make_spawners(e$pop, probs = e$spawnRecruit, species = species)
         e$pop <- e$pop - e$spawners
       }
       
-      e$spawners_down <- e$spawners * e$s_downstream
+      e$spawners_down <- colSums(e$spawners * e$s_downstream) # those that do not successfully outmigrate are assumed to die, are not added back into pop
       
       e$fec <- make_recruits(eggs = e$eggs, sr = sr)
       
@@ -261,30 +265,73 @@ sim_pop_3river_eel <- function(
     for (i in seq_len(n_riv)) {
       e <- envs[[i]]
       
-      # apply this river's own upstream passage survival to the shared age0
-      e$age0_up <- age0_riv2[i] * e$s_upstream_j
+      # apply the probability distribution by in-migrating juveniles proportionalized by upstream survival (so some are not successful)
+      e$age0_up <- age0_riv2[i] * (e$prob_distrib  * e$s_upstream_j)
       
-      # separate density-dependent mortality stage: incoming age-0 in-migrants
-      # (age0_up) compete with the standing population (pop, not spawners --
-      # spawners have already died at sea) for space in the river's total
-      # habitat. Total fish in the river (pop + age0_up) are subject to
-      # Beverton-Holt limitation (a = 1 => no mortality from this process at
-      # S near 0), then survivors are apportioned back to age0_up in
-      # proportion to its share of the pre-limitation total.
-      e$total_fw <- sum(e$pop) + e$age0_up
-      e$total_fw_survivors <- beverton_holt(
-        a = 0.34, S = e$total_fw, b = b, acres = e$acres, age_structured = FALSE
-      )
-      e$age0_up <- e$total_fw_survivors * (e$age0_up / e$total_fw)
+      e$spawners2 <- rowSums(e$spawners)
+       
+      #bev_holt 2A...
+      e$acres_by_reach <- anadrofish::habitat_eel[anadrofish::habitat_eel$River_huc == e$river, ]$Hab_sqkm * 247.105
       
-      # # Calculate density-dependent recruitment from Beverton-Holt curve
-      # e$age0_up <- sum(beverton_holt(
-      #   a = e$fec,
-      #   S = e$spawners,
-      #   b = e$b,
-      #   acres = e$acres,
-      #   age_structured = TRUE
-      # ))
+      e$spawners_per_acre <- e$spawners2#/acres_by_reach
+      e$spawners_per_acre[!is.finite(e$spawners_per_acre)] <- 200
+      
+      e$fit <- nls(e$age0_up ~ (alpha * e$spawners_per_acre) / (1 + 0.005 * e$spawners_per_acre),
+                 data = data.frame(spawners_per_acre = e$spawners_per_acre, age0_up = e$age0_up),
+                 start = list(alpha = 0.34))
+      
+      summary(e$fit)
+      e$alpha_est <- coef(e$fit)["alpha"]
+      e$alpha_est
+      
+      # check fit quality
+      # Plot observed vs. predicted
+      # thing <- as.data.frame(cbind(e$age0_up, e$spawners_per_acre))
+      # 
+      # thing$predicted <- predict(e$fit)
+      # 
+      # plot(thing$spawners_per_acre, thing$age0_up, 
+      #      xlab = "Spawners", ylab = "Age-0 Recruits",
+      #      main = "Beverton-Holt Fit")
+      # points(thing$spawners_per_acre, thing$predicted, col = "red", pch = 16)
+      # 
+      # # Or overlay a smooth curve across the full spawner range
+      # S_seq <- seq(0, max(thing$spawners_per_acre), length.out = 100)
+      # lines(S_seq, (alpha_est * S_seq) / (1 + 0.005 * S_seq), col = "blue", lwd = 2)
+      
+      # Build final function
+      beverton_holt2 <- function(S, alpha = e$alpha_est, beta = 0.005) {
+        beta = 0.005/e$acres_by_reach
+        (alpha * S) / (1 + beta * S)
+      }
+      
+      e$predicted_recruits <- beverton_holt2(S=e$spawners2)
+      e$predicted_recruits[!is.finite(e$predicted_recruits)] <- 0
+      
+      e$age0_up_reach <- pmin(e$age0_up, e$predicted_recruits)
+
+      
+      # # separate density-dependent mortality stage: incoming age-0 in-migrants
+      # # (age0_up) compete with the standing population (pop, not spawners --
+      # # spawners have already died at sea) for space in the river's total
+      # # habitat. Total fish in the river (pop + age0_up) are subject to
+      # # Beverton-Holt limitation (a = 1 => no mortality from this process at
+      # # S near 0), then survivors are apportioned back to age0_up in
+      # # proportion to its share of the pre-limitation total.
+      # e$total_fw <- sum(e$pop) + sum(e$age0_up)
+      # e$total_fw_survivors <- beverton_holt(
+      #   a = 0.34, S = e$total_fw, b = b, acres = e$acres, age_structured = FALSE
+      # )
+      # e$age0_up <- e$total_fw_survivors * (e$age0_up / e$total_fw)
+      # 
+      # # # Calculate density-dependent recruitment from Beverton-Holt curve
+      # # e$age0_up <- sum(beverton_holt(
+      # #   a = e$fec,
+      # #   S = e$spawners,
+      # #   b = e$b,
+      # #   acres = e$acres,
+      # #   age_structured = TRUE
+      # # ))
       
       if (sex_specific) {
         e$pop_m <- project_pop(x = e$pop_m, age0 = e$age0_up * (1 - sr),
@@ -293,7 +340,7 @@ sim_pop_3river_eel <- function(
                                nM = e$nM_f, fM = fM, max_age = e$max_age_f, species = species)
         e$pop   <- add_unequal_vectors(e$pop_m, e$pop_f)
       } else {
-        e$pop <- project_pop(x = e$pop, age0 = e$age0_up, nM = e$nM, fM = fM,
+        e$pop <- project_pop(x = e$pop, age0 = e$age0_up_reach, nM = e$nM, fM = fM,
                              max_age = e$max_age, species = species)
       }
       

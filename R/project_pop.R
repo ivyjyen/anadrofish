@@ -54,10 +54,23 @@ project_pop <- function(x, age0, nM, fM, max_age,
     s <- 1 - (1 - exp(-Z))
   }
 
-  # Project population one time-step and drop
-  # any fish > max_age
-  tplus <- c(age0, x[1:(max_age - 1)]) * s
-
-  # Return the result to R
-  return(tplus[1:max_age])
+  if (species =="EEL") {
+    # Shift ages: prepend age0 (recruits) as new column 1, 
+    # drop the oldest age class (columns beyond max_age - 1)
+    tplus <- cbind(age0, x[, 1:(max_age - 1)])
+    
+    # Apply age-specific survival to each column
+    tplus <- sweep(tplus, MARGIN = 2, s, `*`)
+    
+    # Truncate to max_age columns (in case of any overflow)
+    return(tplus[, 1:max_age])
+    
+  } else {
+    # Project population one time-step and drop
+    # any fish > max_age
+    tplus <- c(age0, x[1:(max_age - 1)]) * s
+    
+    # Return the result to R
+    return(tplus[1:max_age])
+    }
 }
