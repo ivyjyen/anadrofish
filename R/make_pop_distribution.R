@@ -71,20 +71,20 @@ combined_f <- function(x, dams = dams_list, hot_val = hot, drop = upstream) {
   })
 }
 
-# Plot ----
-x_vals <- seq(0, max, by = 0.01)
-y_vals <- combined_f(x_vals)
-
-plot(x_vals, y_vals, type = "l", col = "blue", lwd = 3,
-     xlab = "River Distance",
-     ylab = "Probability Distribution",
-     main = river)
-  abline(v = dams_list, col = "red", lty = 2)
-  abline(v = hot, col = "darkgreen", lty = 3, lwd = 2)
-  legend("topright", 
-         legend = c("Combined f(x)", "Dams", "Head of Tide"),
-         col = c("blue", "red", "darkgreen"), 
-         lty = c(1, 2, 3), lwd = c(2, 1, 2))
+# # Plot ----
+# x_vals <- seq(0, max, by = 0.01)
+# y_vals <- combined_f(x_vals)
+# 
+# plot(x_vals, y_vals, type = "l", col = "blue", lwd = 3,
+#      xlab = "River Distance",
+#      ylab = "Probability Distribution",
+#      main = river)
+#   abline(v = dams_list, col = "red", lty = 2)
+#   abline(v = hot, col = "darkgreen", lty = 3, lwd = 2)
+#   legend("topright", 
+#          legend = c("Combined f(x)", "Dams", "Head of Tide"),
+#          col = c("blue", "red", "darkgreen"), 
+#          lty = c(1, 2, 3), lwd = c(2, 1, 2))
 
 # Calculate Distribution by river km----
 hab$prob_dist <- combined_f(hab$riv_dist) / sum(combined_f(hab$riv_dist))

@@ -300,7 +300,7 @@ sim_pop_3river_eel <- function(
       # lines(S_seq, (alpha_est * S_seq) / (1 + 0.005 * S_seq), col = "blue", lwd = 2)
       
       # Build final function
-      beverton_holt2 <- function(S, alpha = e$alpha_est, beta = 0.005) {
+      beverton_holt2 <- function(S, alpha = 5, beta = 0.005) {
         beta = 0.005/e$acres_by_reach
         (alpha * S) / (1 + beta * S)
       }

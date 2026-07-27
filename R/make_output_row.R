@@ -33,11 +33,11 @@ make_output_row <- function(.sim_pop, species = c("AMS", "ALE", "BBH", "EEL"), s
       sr           = .sim_pop$sr,
       s_juvenile   = .sim_pop$s_juvenile,
       iteroparity  = .sim_pop$iteroparity,
-      spawners     = list(colSums(.sim_pop$spawners)), # spawners entering fw to spawn, spawners2 = spawners who have survived after spawning
+      spawners     = list(.sim_pop$spawners), # spawners entering fw to spawn, spawners2 = spawners who have survived after spawning
       spawners_down = list(.sim_pop$spawners_down), # spawners who have successfully spawned and outmigrated past dams
       #pop_before_nM = sum(.sim_pop$pop_down)+.sim_pop$age0_down,
       #pop_down         = list(.sim_pop$pop_down),
-      pop          = list(colSums(.sim_pop$pop)), # after project pop (after inst mortality)
+      pop          = list(.sim_pop$pop), # after project pop (after inst mortality)
       juveniles_out = .sim_pop$age0_down,
       juveniles_before_outmigrating = .sim_pop$age0,
       larvae       = sum(.sim_pop$recruits_f_age)
@@ -75,13 +75,13 @@ make_output_row <- function(.sim_pop, species = c("AMS", "ALE", "BBH", "EEL"), s
       n_init       = .sim_pop$n_init,
       sr           = .sim_pop$sr,
       s_juvenile   = .sim_pop$s_juvenile,
-      spawners     = list(.sim_pop$spawners), # spawners entering fw to spawn, spawners2 = spawners who have survived after spawning
+      spawners     = as.list(unname(colSums(.sim_pop$spawners))), # spawners entering fw to spawn, spawners2 = spawners who have survived after spawning
       #pop_before_nM = sum(.sim_pop$pop_down)+.sim_pop$age0_down,
       #pop_down         = list(.sim_pop$pop_down),
-      pop          = list(.sim_pop$pop), # after project pop (after inst mortality)
-      juveniles_up = .sim_pop$age0_up,
-      juveniles_before_up = .sim_pop$age0,
-      larvae       = sum(.sim_pop$recruits_f_age)
+      pop          = as.list(unname(colSums(.sim_pop$pop))), # after project pop (after inst mortality)
+      juveniles_up = sum(.sim_pop$age0_up_reach)
+      # juveniles_before_up = .sim_pop$age0,
+      # larvae       = sum(.sim_pop$recruits_f_age)
     )
     
     if (sex_specific) {
