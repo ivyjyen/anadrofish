@@ -49,7 +49,7 @@ tidal_f <- make_exp(0, 0.01, hot, 0.1)
 fw_f <- make_exp(hot, 0.1, max, 0.01)
 
 # Dam penalty ----
-combined_f <- function(x, dams = dams_list, hot_val = hot, drop = upstream) {
+combined_f <- function(x, dams = dams_list, hot_val = hot, drop = 1-upstream) {
   dams_sorted <- sort(dams)
   
   sapply(x, function(xi) {

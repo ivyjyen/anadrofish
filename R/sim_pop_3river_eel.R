@@ -226,7 +226,7 @@ sim_pop_3river_eel <- function(
       if (sex_specific) {
         e$spawners_m <- make_spawners(e$pop_m, probs = e$spawnRecruit_m, species = species)
         e$spawners_f <- make_spawners(e$pop_f, probs = e$spawnRecruit_f, species = species)
-        e$spawners   <- add_unequal_vectors(e$spawners_m, e$spawners_f) # this needs work
+        e$spawners   <- add_unequal_vectors(e$spawners_m, e$spawners_f)
         
         e$pop_m <- e$pop_m - e$spawners_m
         e$pop_f <- e$pop_f - e$spawners_f
@@ -273,16 +273,16 @@ sim_pop_3river_eel <- function(
       #bev_holt 2A...
       e$acres_by_reach <- anadrofish::habitat_eel[anadrofish::habitat_eel$River_huc == e$river, ]$Hab_sqkm * 247.105
       
-      e$spawners_per_acre <- e$spawners2#/acres_by_reach
-      e$spawners_per_acre[!is.finite(e$spawners_per_acre)] <- 200
+      e$spawners_per_acre <- e$spawners2/e$acres_by_reach
+      e$spawners_per_acre[!is.finite(e$spawners_per_acre)] <- 0
       
-      e$fit <- nls(e$age0_up ~ (alpha * e$spawners_per_acre) / (1 + 0.005 * e$spawners_per_acre),
-                 data = data.frame(spawners_per_acre = e$spawners_per_acre, age0_up = e$age0_up),
-                 start = list(alpha = 0.34))
-      
-      summary(e$fit)
-      e$alpha_est <- coef(e$fit)["alpha"]
-      e$alpha_est
+      # e$fit <- nls(e$age0_up ~ (alpha * e$spawners_per_acre) / (1 + 0.005 * e$spawners_per_acre),
+      #            data = data.frame(spawners_per_acre = e$spawners_per_acre, age0_up = e$age0_up),
+      #            start = list(alpha = 0.34))
+      # 
+      # summary(e$fit)
+      # e$alpha_est <- coef(e$fit)["alpha"]
+      # e$alpha_est
       
       # check fit quality
       # Plot observed vs. predicted
@@ -300,14 +300,14 @@ sim_pop_3river_eel <- function(
       # lines(S_seq, (alpha_est * S_seq) / (1 + 0.005 * S_seq), col = "blue", lwd = 2)
       
       # Build final function
-      beverton_holt2 <- function(S, alpha = 5, beta = 0.005) {
-        beta = 0.005/e$acres_by_reach
+      beverton_holt2 <- function(S = e$spawners_per_acre, alpha = 5, beta = e$b) { #0.15077 represents a 0.35 steepness
+
         (alpha * S) / (1 + beta * S)
       }
       
-      e$predicted_recruits <- beverton_holt2(S=e$spawners2)
-      e$predicted_recruits[!is.finite(e$predicted_recruits)] <- 0
-      
+      e$predicted_recruits_per_acre <- beverton_holt2(S = e$spawners_per_acre)
+      e$predicted_recruits_per_acre[!is.finite(e$predicted_recruits_per_acre)] <- 0
+      e$predicted_recruits <- e$predicted_recruits_per_acre * e$acres_by_reach
       e$age0_up_reach <- pmin(e$age0_up, e$predicted_recruits)
 
       
@@ -334,9 +334,9 @@ sim_pop_3river_eel <- function(
       # # ))
       
       if (sex_specific) {
-        e$pop_m <- project_pop(x = e$pop_m, age0 = e$age0_up * (1 - sr),
+        e$pop_m <- project_pop(x = e$pop_m, age0 = e$age0_up_reach * (1 - sr),
                                nM = e$nM_m, fM = fM, max_age = e$max_age_m, species = species)
-        e$pop_f <- project_pop(x = e$pop_f, age0 = e$age0_up * sr,
+        e$pop_f <- project_pop(x = e$pop_f, age0 = e$age0_up_reach * sr,
                                nM = e$nM_f, fM = fM, max_age = e$max_age_f, species = species)
         e$pop   <- add_unequal_vectors(e$pop_m, e$pop_f)
       } else {

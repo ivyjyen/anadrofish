@@ -4,7 +4,7 @@
 \alias{make_spawners}
 \title{Make spawning population}
 \usage{
-make_spawners(pop, probs)
+make_spawners(pop, probs, species)
 }
 \arguments{
 \item{pop}{Numeric vector containing age-structured spawner abundance.}

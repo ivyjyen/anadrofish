@@ -20,7 +20,7 @@ make_output_row <- function(.sim_pop, species = c("AMS", "ALE", "BBH", "EEL"), s
       region       = .sim_pop$region,
       govt         = .sim_pop$govt,
       lat          = .sim_pop$latitude,
-      habitat      = .sim_pop$acres / 247.105,
+      habitat      = .sim_pop$acres,
       year         = .sim_pop$t,
       upstream     = if (length(.sim_pop$upstream) > 1)
         "dam specific: check your scenarios" else as.character(.sim_pop$upstream),
@@ -66,7 +66,7 @@ make_output_row <- function(.sim_pop, species = c("AMS", "ALE", "BBH", "EEL"), s
       region       = .sim_pop$region,
       govt         = .sim_pop$govt,
       lat          = .sim_pop$latitude,
-      habitat      = .sim_pop$acres / 247.105,
+      habitat      = .sim_pop$acres,
       year         = .sim_pop$t,
       upstream     = if (length(.sim_pop$upstream) > 1)
         "dam specific: check your scenarios" else as.character(.sim_pop$upstream),
@@ -79,7 +79,8 @@ make_output_row <- function(.sim_pop, species = c("AMS", "ALE", "BBH", "EEL"), s
       #pop_before_nM = sum(.sim_pop$pop_down)+.sim_pop$age0_down,
       #pop_down         = list(.sim_pop$pop_down),
       pop          = as.list(unname(colSums(.sim_pop$pop))), # after project pop (after inst mortality)
-      juveniles_up = sum(.sim_pop$age0_up_reach)
+      juveniles_up = sum(.sim_pop$age0_up_reach),
+      beta         = .sim_pop$b
       # juveniles_before_up = .sim_pop$age0,
       # larvae       = sum(.sim_pop$recruits_f_age)
     )
