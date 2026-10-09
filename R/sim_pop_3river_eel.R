@@ -182,7 +182,17 @@ sim_pop_3river_eel <- function(
     
     e$acres          <- make_habitat(river = e$river, species = species, upstream = upstream, custom_habitat = custom_habitat)
     e$s_downstream   <- make_downstream(river = e$river, species = species, downstream = downstream,   upstream = upstream, custom_habitat = custom_habitat)
-    e$prob_distrib   <- make_pop_distribution(river = e$river, species = species, upstream = upstream, downstream = downstream)
+    #e$prob_distrib   <- make_pop_distribution3(river = e$river, species = species, upstream = upstream, downstream = downstream)
+    
+    e$prob_distrib <- if (e$river == "Penobscot") {
+      anadrofish::Penobscot$probability
+    }
+    e$prob_distrib <- if (e$river == "Kennebec") {
+      anadrofish::Kennebec$probability
+    }
+    e$prob_distrib <- if (e$river == "Androscoggin") {
+      anadrofish::Androscoggin$probability
+    }
     
     environment(make_pop) <- e
     if (sex_specific) {
@@ -195,7 +205,8 @@ sim_pop_3river_eel <- function(
     } else {
       
       e$pop <- make_pop(river = river, species = species, max_age = e$max_age, nM = e$nM, fM = fM, n_init = n_init)
-      e$pop <- outer(e$prob_distrib, e$pop, "*")
+      e$pop <- outer(as.numeric(e$prob_distrib), as.numeric(e$pop), "*")
+      
     }
     
     # EEL-specific placeholders (as in sim_pop's EEL branch)
@@ -266,7 +277,7 @@ sim_pop_3river_eel <- function(
       e <- envs[[i]]
       
       # apply the probability distribution by in-migrating juveniles proportionalized by upstream survival (so some are not successful)
-      e$age0_up <- age0_riv2[i] * (e$prob_distrib  * e$s_upstream_j)
+      e$age0_up <- age0_riv2[i] * e$prob_distrib
       
       e$spawners2 <- rowSums(e$spawners)
        
@@ -300,7 +311,7 @@ sim_pop_3river_eel <- function(
       # lines(S_seq, (alpha_est * S_seq) / (1 + 0.005 * S_seq), col = "blue", lwd = 2)
       
       # Build final function
-      beverton_holt2 <- function(S = e$spawners_per_acre, alpha = 5, beta = e$b) { #0.15077 represents a 0.35 steepness
+      beverton_holt2 <- function(S = e$spawners_per_acre, alpha = 400, beta = e$b) { #0.15077 represents a 0.35 steepness
 
         (alpha * S) / (1 + beta * S)
       }

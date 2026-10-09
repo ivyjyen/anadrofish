@@ -19,7 +19,7 @@ hab <- anadrofish::habitat_eel[anadrofish::habitat_eel$River_huc == river, ]
 #   POP = rep("NNE", 8)
 # )
 
-dams <- anadrofish::dams_eel[anadrofish::dams_eel$River_huc == river, ]
+#dams <- anadrofish::dams_eel[anadrofish::dams_eel$River_huc == river, ]
 # dams <- data.frame(
 #   River_huc = "Trial River",
 #   hot = 125,
@@ -27,9 +27,17 @@ dams <- anadrofish::dams_eel[anadrofish::dams_eel$River_huc == river, ]
 # )
 
 # Set head of tide and furthest point inland
-hot <- dams$hot # peak is at head of tide
+hot <- max(hab[hab$Tidal==1,]$riv_dist) # peak is at head of tide
 max <- max(hab$riv_dist)
+
+# make unique paths...
+
+
 dams_list <- na.omit(unlist(dams[1, 3:ncol(dams)]))
+
+dam_loc <- subset(hab, hab$LocDams==1)
+plot(table(dam_loc$DamOrder))
+dams_list <- sort(dam_loc$riv_dist)
 
 # Solve y = A * b^x given two points (x1,y1) and (x2,y2)
 exp_fit <- function(x1, y1, x2, y2) {
@@ -71,20 +79,20 @@ combined_f <- function(x, dams = dams_list, hot_val = hot, drop = 1-upstream) {
   })
 }
 
-# # Plot ----
-# x_vals <- seq(0, max, by = 0.01)
-# y_vals <- combined_f(x_vals)
-# 
-# plot(x_vals, y_vals, type = "l", col = "blue", lwd = 3,
-#      xlab = "River Distance",
-#      ylab = "Probability Distribution",
-#      main = river)
-#   abline(v = dams_list, col = "red", lty = 2)
-#   abline(v = hot, col = "darkgreen", lty = 3, lwd = 2)
-#   legend("topright", 
-#          legend = c("Combined f(x)", "Dams", "Head of Tide"),
-#          col = c("blue", "red", "darkgreen"), 
-#          lty = c(1, 2, 3), lwd = c(2, 1, 2))
+# Plot ----
+x_vals <- seq(0, max, by = 0.01)
+y_vals <- combined_f(x_vals)
+
+plot(x_vals, y_vals, type = "l", col = "blue", lwd = 3,
+     xlab = "River Distance",
+     ylab = "Probability Distribution",
+     main = river)
+  abline(v = dams_list, col = "red", lty = 2)
+  abline(v = hot, col = "darkgreen", lty = 3, lwd = 2)
+  legend("topright",
+         legend = c("Combined f(x)", "Dams", "Head of Tide"),
+         col = c("blue", "red", "darkgreen"),
+         lty = c(1, 2, 3), lwd = c(2, 1, 2))
 
 # Calculate Distribution by river km----
 hab$prob_dist <- combined_f(hab$riv_dist) / sum(combined_f(hab$riv_dist))
