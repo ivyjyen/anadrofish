@@ -12,7 +12,7 @@
 #'
 #' @export
 #'
-make_pfas_out <- function(age0_down) {
+make_pfas_out <- function(age0_down, juv_ng_g) {
     
   # Simulate PFAS concentration for out-migrating individuals and compute total
 
@@ -24,7 +24,7 @@ make_pfas_out <- function(age0_down) {
 
   simulated_conc <- rlnorm( # log distribution (Xia et al. 2024)
     n = round(age0_down),
-    meanlog = log(15),
+    meanlog = log(juv_ng_g),
     sdlog = log(2)
   )
 

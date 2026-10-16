@@ -44,7 +44,10 @@ make_output_row <- function(.sim_pop, sex_specific = FALSE) {
     biomass_out    = .sim_pop$biomass_out,
     pfas_in        = sum(.sim_pop$pfas_in), # units = ng
     pfas_in2       = sum(.sim_pop$pfas_in2), # units = ng
-    pfas_out       = .sim_pop$pfas_out
+    pfas_out       = .sim_pop$pfas_out,
+    pfas_g         = .sim_pop$pfas_g,
+    pfas_ng_L      = .sim_pop$pfas_ng_L,
+    juv_ng_g       = .sim_pop$juv_ng_g
   )
 
   if (sex_specific) {

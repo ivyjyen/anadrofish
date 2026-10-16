@@ -416,7 +416,12 @@ sim_pop <- function(
       n_init = .sim_pop$n_init * .sim_pop$sr
     )
   }
+  
+  # PFAS parameters
 
+  .sim_pop$pfas_ng_L <- 3.613 # Unity
+  .sim_pop$pfas_g <- (3.613 * 68466203030)/1e9 # Unity
+  .sim_pop$juv_ng_g <- exp(0.751*.sim_pop$pfas_ng_L + 0.804) # Unity
 
   # Simulate for nyears until population stabilizes.
   for (t in 1:.sim_pop$nyears) {
@@ -534,7 +539,7 @@ sim_pop <- function(
     if (sex_specific == FALSE) {
       .sim_pop$s_spawn <- make_s_spawn(.sim_pop$nM, .sim_pop$s_postspawn)
       
-      .sim_pop$spawners2 <- .sim_pop$spawners * .sim_pop$s_spawn
+      .sim_pop$spawners2 <- .sim_pop$spawners2 * .sim_pop$s_spawn
     }
 
     if (sex_specific == TRUE) {
@@ -547,8 +552,8 @@ sim_pop <- function(
         s_postspawn = .sim_pop$s_postspawn_f
       )
       
-      .sim_pop$spawners2_m <- .sim_pop$spawners_m * .sim_pop$s_spawn_m
-      .sim_pop$spawners2_f <- .sim_pop$spawners_f * .sim_pop$s_spawn_f
+      .sim_pop$spawners2_m <- .sim_pop$spawners2_m * .sim_pop$s_spawn_m
+      .sim_pop$spawners2_f <- .sim_pop$spawners2_f * .sim_pop$s_spawn_f
       
       .sim_pop$spawners2 <- add_unequal_vectors(
            .sim_pop$spawners2_m,
@@ -580,14 +585,14 @@ sim_pop <- function(
     )
     
     # PFAS
-    if (t < nyears) {
-      
-      .sim_pop$pfas_in <- 0
-      .sim_pop$pfas_in2 <- 0
-      .sim_pop$pfas_out <- 0
-    }
+    # if (t < nyears) {
+    #   
+    #   .sim_pop$pfas_in <- 0
+    #   .sim_pop$pfas_in2 <- 0
+    #   .sim_pop$pfas_out <- 0
+    # }
     
-    if (t == nyears) {
+    # if (t == nyears) {
       
       .sim_pop$pfas_in <- make_pfas_in(
         spawners = .sim_pop$spawners,
@@ -602,10 +607,11 @@ sim_pop <- function(
       )
       
       .sim_pop$pfas_out <- make_pfas_out(
-        age0_down = .sim_pop$age0_down
+        age0_down = .sim_pop$age0_down,
+        juv_ng_g  = .sim_pop$juv_ng_g
       )
-
-    }
+      
+    # }
 
     # Project population into next time step
     if (sex_specific == FALSE) {
@@ -660,6 +666,11 @@ sim_pop <- function(
 
     # Capture output for this year
     rows[[t]] <- make_output_row(.sim_pop, sex_specific)
+    
+    .sim_pop$pfas_g <- .sim_pop$pfas_g - (.sim_pop$pfas_out/1e9)
+    .sim_pop$pfas_ng_L <- (.sim_pop$pfas_g * 1e9) / 68466203030
+    .sim_pop$juv_ng_g <- exp(0.751*.sim_pop$pfas_ng_L + 0.804)
+    
   } # YEAR LOOP
 
   # Assemble results into a data.frame
